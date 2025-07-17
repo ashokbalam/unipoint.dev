@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Button, TextField, Typography, Alert, MenuItem, Select, InputLabel, FormControl, List, ListItem, ListItemText, Dialog, DialogTitle, DialogContent, DialogActions, Card, CardContent, Paper } from '@mui/material';
 import { Formik, Form, Field, FieldArray } from 'formik';
 import * as Yup from 'yup';
@@ -138,7 +138,7 @@ export default function Categories({ godMode }: CategoriesProps) {
                             <Typography variant="subtitle1" sx={{ mt: 3, mb: 2, fontWeight: 600 }}>
                               Scoring Rubric
                             </Typography>
-                            {values.rubric.map((r, idx) => (
+                            {values.rubric.map((_: any, idx: number) => (
                               <Paper key={idx} sx={{ p: 2, mb: 2, borderRadius: 2 }}>
                                 <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
                                   <Field
@@ -148,8 +148,8 @@ export default function Categories({ godMode }: CategoriesProps) {
                                     type="number"
                                     sx={{ width: 90 }}
                                     margin="normal"
-                                    error={Boolean(touched.rubric?.[idx]?.min && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).min))}
-                                    helperText={touched.rubric?.[idx]?.min && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).min}
+                                    error={Boolean((touched.rubric as any)?.[idx]?.min && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).min))}
+                                    helperText={(touched.rubric as any)?.[idx]?.min && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).min}
                                   />
                                   <Field
                                     as={TextField}
@@ -158,8 +158,8 @@ export default function Categories({ godMode }: CategoriesProps) {
                                     type="number"
                                     sx={{ width: 90 }}
                                     margin="normal"
-                                    error={Boolean(touched.rubric?.[idx]?.max && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).max))}
-                                    helperText={touched.rubric?.[idx]?.max && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).max}
+                                    error={Boolean((touched.rubric as any)?.[idx]?.max && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).max))}
+                                    helperText={(touched.rubric as any)?.[idx]?.max && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).max}
                                   />
                                   <Field
                                     as={TextField}
@@ -168,8 +168,8 @@ export default function Categories({ godMode }: CategoriesProps) {
                                     type="number"
                                     sx={{ width: 120 }}
                                     margin="normal"
-                                    error={Boolean(touched.rubric?.[idx]?.storyPoints && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).storyPoints))}
-                                    helperText={touched.rubric?.[idx]?.storyPoints && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).storyPoints}
+                                    error={Boolean((touched.rubric as any)?.[idx]?.storyPoints && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).storyPoints))}
+                                    helperText={(touched.rubric as any)?.[idx]?.storyPoints && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).storyPoints}
                                   />
                                   <Field
                                     as={TextField}
@@ -177,8 +177,8 @@ export default function Categories({ godMode }: CategoriesProps) {
                                     label="Note"
                                     sx={{ width: 180 }}
                                     margin="normal"
-                                    error={Boolean(touched.rubric?.[idx]?.note && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).note))}
-                                    helperText={touched.rubric?.[idx]?.note && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).note}
+                                    error={Boolean((touched.rubric as any)?.[idx]?.note && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).note))}
+                                    helperText={(touched.rubric as any)?.[idx]?.note && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).note}
                                   />
                                   <Button
                                     variant="outlined"
@@ -283,7 +283,7 @@ export default function Categories({ godMode }: CategoriesProps) {
                         {({ push, remove }) => (
                           <>
                             <Typography variant="subtitle1" sx={{ mt: 2 }}>Scoring Rubric</Typography>
-                            {values.rubric.map((r, idx) => (
+                            {values.rubric.map((_: any, idx: number) => (
                               <Box key={idx} display="flex" gap={2} alignItems="center" mb={2}>
                                 <Field
                                   as={TextField}
@@ -292,8 +292,8 @@ export default function Categories({ godMode }: CategoriesProps) {
                                   type="number"
                                   sx={{ width: 90 }}
                                   margin="normal"
-                                  error={Boolean(touched.rubric?.[idx]?.min && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).min))}
-                                  helperText={touched.rubric?.[idx]?.min && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).min}
+                                  error={Boolean((touched.rubric as any)?.[idx]?.min && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).min))}
+                                  helperText={(touched.rubric as any)?.[idx]?.min && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).min}
                                 />
                                 <Field
                                   as={TextField}
@@ -302,8 +302,8 @@ export default function Categories({ godMode }: CategoriesProps) {
                                   type="number"
                                   sx={{ width: 90 }}
                                   margin="normal"
-                                  error={Boolean(touched.rubric?.[idx]?.max && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).max))}
-                                  helperText={touched.rubric?.[idx]?.max && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).max}
+                                  error={Boolean((touched.rubric as any)?.[idx]?.max && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).max))}
+                                  helperText={(touched.rubric as any)?.[idx]?.max && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).max}
                                 />
                                 <Field
                                   as={TextField}
@@ -312,8 +312,8 @@ export default function Categories({ godMode }: CategoriesProps) {
                                   type="number"
                                   sx={{ width: 120 }}
                                   margin="normal"
-                                  error={Boolean(touched.rubric?.[idx]?.storyPoints && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).storyPoints))}
-                                  helperText={touched.rubric?.[idx]?.storyPoints && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).storyPoints}
+                                  error={Boolean((touched.rubric as any)?.[idx]?.storyPoints && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).storyPoints))}
+                                  helperText={(touched.rubric as any)?.[idx]?.storyPoints && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).storyPoints}
                                 />
                                 <Field
                                   as={TextField}
@@ -321,8 +321,8 @@ export default function Categories({ godMode }: CategoriesProps) {
                                   label="Note"
                                   sx={{ width: 180 }}
                                   margin="normal"
-                                  error={Boolean(touched.rubric?.[idx]?.note && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).note))}
-                                  helperText={touched.rubric?.[idx]?.note && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).note}
+                                  error={Boolean((touched.rubric as any)?.[idx]?.note && (errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).note))}
+                                  helperText={(touched.rubric as any)?.[idx]?.note && errors.rubric && Array.isArray(errors.rubric) && errors.rubric[idx] && (errors.rubric[idx] as any).note}
                                 />
                                 <Button
                                   variant="outlined"

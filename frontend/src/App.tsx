@@ -5,7 +5,7 @@ import Categories from './pages/Categories';
 import Questions from './pages/Questions';
 import AnswerQuestionnaire from './pages/AnswerQuestionnaire';
 import TeamSelectionPage from './pages/TeamSelectionPage';
-import { Container, AppBar, Toolbar, Typography, Button, CssBaseline, Menu, MenuItem, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, CssBaseline, Menu, MenuItem, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import MuiLink from '@mui/material/Link';
@@ -107,41 +107,6 @@ const theme = createTheme({
     },
   },
 });
-
-function CreateMenu() {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const navigate = useNavigate();
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleMenu = (path: string) => {
-    navigate(path);
-    handleClose();
-  };
-
-  return (
-    <>
-      <Button color="inherit" onClick={handleClick} aria-controls={open ? 'create-menu' : undefined} aria-haspopup="true" aria-expanded={open ? 'true' : undefined}
-      >Create</Button>
-      <Menu
-        id="create-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{ 'aria-labelledby': 'create-button' }}
-      >
-        <MenuItem onClick={() => handleMenu('/onboard')}>Team</MenuItem>
-        <MenuItem onClick={() => handleMenu('/categories')}>Category</MenuItem>
-        <MenuItem onClick={() => handleMenu('/questions')}>Question</MenuItem>
-      </Menu>
-    </>
-  );
-}
 
 function GodModeButton({ setGodMode, godMode }: { setGodMode: (v: boolean) => void, godMode: boolean }) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -278,7 +243,7 @@ function App() {
           px: { xs: 0, sm: 0 }
         }}>
           <Grid container justifyContent="center" alignItems="flex-start" sx={{ minHeight: '100vh', width: '100vw', m: 0, p: 0 }}>
-            <Grid item xs={12} sm={11} md={10} lg={8} xl={7} sx={{ width: '100%', px: { xs: 2, sm: 3, md: 4 }, py: 0 }}>
+            <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: '91.6667%', md: '83.3333%', lg: '66.6667%', xl: '58.3333%' }, px: { xs: 2, sm: 3, md: 4 }, py: 0 }}>
               <Routes>
                 <Route path="/onboard" element={<OnboardTenant godMode={godMode} />} />
                 <Route path="/categories" element={<Categories godMode={godMode} />} />
@@ -287,7 +252,7 @@ function App() {
                 <Route path="/" element={<TeamSelectionPage />} />
                 <Route path="*" element={<TeamSelectionPage />} />
               </Routes>
-            </Grid>
+            </Box>
           </Grid>
         </Box>
       </Router>

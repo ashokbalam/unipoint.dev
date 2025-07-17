@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Button, TextField, Typography, Alert, MenuItem, Select, InputLabel, FormControl, List, ListItem, ListItemText, Dialog, DialogTitle, DialogContent, DialogActions, Card, CardContent, Paper } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import { Formik, Form, Field, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -144,7 +143,7 @@ export default function Questions({ godMode }: QuestionsProps) {
                             <Typography variant="subtitle1" sx={{ mt: 3, mb: 2, fontWeight: 600 }}>
                               Options
                             </Typography>
-                            {values.options.map((option, idx) => (
+                            {values.options.map((_: any, idx: number) => (
                               <Paper key={idx} sx={{ p: 2, mb: 2, borderRadius: 2 }}>
                                 <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
                                   <Field
@@ -153,8 +152,8 @@ export default function Questions({ godMode }: QuestionsProps) {
                                     label={`Option ${idx + 1} Label`}
                                     fullWidth
                                     margin="normal"
-                                    error={Boolean(touched.options?.[idx]?.label && (errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).label))}
-                                    helperText={touched.options?.[idx]?.label && errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).label}
+                                    error={Boolean((touched.options as any)?.[idx]?.label && (errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).label))}
+                                    helperText={(touched.options as any)?.[idx]?.label && errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).label}
                                   />
                                   <Field
                                     as={TextField}
@@ -163,8 +162,8 @@ export default function Questions({ godMode }: QuestionsProps) {
                                     type="number"
                                     sx={{ width: 120 }}
                                     margin="normal"
-                                    error={Boolean(touched.options?.[idx]?.points && (errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).points))}
-                                    helperText={touched.options?.[idx]?.points && errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).points}
+                                    error={Boolean((touched.options as any)?.[idx]?.points && (errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).points))}
+                                    helperText={(touched.options as any)?.[idx]?.points && errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).points}
                                   />
                                   <Button
                                     variant="outlined"
@@ -224,7 +223,7 @@ export default function Questions({ godMode }: QuestionsProps) {
                   }>
                     <ListItemText
                       primary={q.text}
-                      secondary={q.options.map((opt: any, i: number) => `${opt.label} (${opt.points})`).join(', ')}
+                      secondary={q.options.map((opt: any, _: any) => `${opt.label} (${opt.points})`).join(', ')}
                     />
                   </ListItem>
                 ))}
@@ -269,7 +268,7 @@ export default function Questions({ godMode }: QuestionsProps) {
                         {({ push, remove }) => (
                           <>
                             <Typography variant="subtitle1" sx={{ mt: 2 }}>Options:</Typography>
-                            {values.options.map((option, idx) => (
+                            {values.options.map((_: any, idx: number) => (
                               <Box key={idx} display="flex" gap={2} alignItems="center" mb={2}>
                                 <Field
                                   as={TextField}
@@ -277,8 +276,8 @@ export default function Questions({ godMode }: QuestionsProps) {
                                   label={`Option ${idx + 1} Label`}
                                   fullWidth
                                   margin="normal"
-                                  error={Boolean(touched.options?.[idx]?.label && (errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).label))}
-                                  helperText={touched.options?.[idx]?.label && errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).label}
+                                  error={Boolean((touched.options as any)?.[idx]?.label && (errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).label))}
+                                  helperText={(touched.options as any)?.[idx]?.label && errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).label}
                                 />
                                 <Field
                                   as={TextField}
@@ -287,8 +286,8 @@ export default function Questions({ godMode }: QuestionsProps) {
                                   type="number"
                                   sx={{ width: 120 }}
                                   margin="normal"
-                                  error={Boolean(touched.options?.[idx]?.points && (errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).points))}
-                                  helperText={touched.options?.[idx]?.points && errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).points}
+                                  error={Boolean((touched.options as any)?.[idx]?.points && (errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).points))}
+                                  helperText={(touched.options as any)?.[idx]?.points && errors.options && Array.isArray(errors.options) && errors.options[idx] && (errors.options[idx] as any).points}
                                 />
                                 <Button
                                   variant="outlined"
