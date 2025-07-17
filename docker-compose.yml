@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   backend:
+    container_name: unipoint-backend
     build: ./backend
     restart: always
     environment:
@@ -13,6 +14,7 @@ services:
       - '4000:4000'
 
   frontend:
+    container_name: unipoint-frontend
     build: ./frontend
     restart: always
     depends_on:

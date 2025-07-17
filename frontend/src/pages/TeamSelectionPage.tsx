@@ -22,7 +22,7 @@ export default function TeamSelectionPage() {
       <Card sx={{ p: 3 }}>
         <CardContent>
           <Typography variant="h4" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
-            Select Team
+            Pick Your Team
           </Typography>
           <FormControl fullWidth margin="normal">
             <InputLabel id="tenant-select-label" sx={{ color: 'secondary.main', '&.Mui-focused': { color: 'secondary.main' } }}>Team</InputLabel>
