@@ -28,7 +28,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Inter, Roboto, "Segoe UI", Arial, sans-serif',
+    fontFamily: 'Montserrat, Inter, Roboto, "Segoe UI", Arial, sans-serif',
     h4: {
       fontWeight: 700,
       letterSpacing: '-0.02em',

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { teamBox, teamCard, teamTitle } from './TeamSelectionPage.styles';
 
 export default function TeamSelectionPage() {
   const [tenants, setTenants] = useState<any[]>([]);
@@ -18,10 +19,10 @@ export default function TeamSelectionPage() {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 12 }}>
-      <Card sx={{ p: 3 }}>
+    <Box sx={teamBox}>
+      <Card sx={teamCard}>
         <CardContent>
-          <Typography variant="h4" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
+          <Typography variant="h4" gutterBottom sx={teamTitle}>
             Pick Your Team
           </Typography>
           <FormControl fullWidth margin="normal">

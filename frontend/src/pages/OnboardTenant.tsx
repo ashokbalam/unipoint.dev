@@ -3,6 +3,8 @@ import { Box, Button, TextField, Typography, Alert, Card, CardContent } from '@m
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { actionButtonStyle } from '../styles';
+import { onboardBox, onboardCard, onboardTitle } from './OnboardTenant.styles';
 
 const TenantSchema = Yup.object().shape({
   name: Yup.string().required('Team name is required'),
@@ -25,12 +27,12 @@ export default function OnboardTenant({ godMode }: OnboardTenantProps) {
   }
 
   return (
-    <Box sx={{ maxWidth: 500, mx: 'auto', mt: 8 }}>
-      <Typography variant="h4" gutterBottom sx={{ mb: 4, textAlign: 'center' }}>
+    <Box sx={onboardBox}>
+      <Typography variant="h4" gutterBottom sx={onboardTitle}>
         Onboard New Team
       </Typography>
       
-      <Card sx={{ p: 4 }}>
+      <Card sx={onboardCard}>
         <CardContent>
           <Formik
             initialValues={{ name: '' }}
@@ -63,10 +65,10 @@ export default function OnboardTenant({ godMode }: OnboardTenantProps) {
                 <Button
                   type="submit"
                   variant="contained"
-                  color="primary"
+                  color="secondary"
                   fullWidth
                   disabled={isSubmitting}
-                  sx={{ mt: 3 }}
+                  sx={actionButtonStyle}
                 >
                   Onboard
                 </Button>

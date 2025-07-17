@@ -3,6 +3,8 @@ import { Box, Button, TextField, Typography, Alert, MenuItem, Select, InputLabel
 import { Formik, Form, Field, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { cardStyle, actionButtonStyle, smallButtonStyle } from '../styles';
+import { listItem } from './Questions.styles';
 
 const QuestionSchema = Yup.object().shape({
   text: Yup.string().required('Question text is required'),
@@ -60,7 +62,7 @@ export default function Questions({ godMode }: QuestionsProps) {
         Questions
       </Typography>
       
-      <Card sx={{ mb: 4, p: 3 }}>
+      <Card sx={cardStyle}>
         <CardContent>
           <FormControl fullWidth margin="normal">
             <InputLabel id="tenant-select-label">Select Team</InputLabel>
@@ -79,7 +81,7 @@ export default function Questions({ godMode }: QuestionsProps) {
       </Card>
 
       {selectedTenant && (
-        <Card sx={{ mb: 4, p: 3 }}>
+        <Card sx={cardStyle}>
           <CardContent>
             <FormControl fullWidth margin="normal">            <InputLabel id="category-select-label">Select Category</InputLabel>
               <Select
@@ -170,7 +172,7 @@ export default function Questions({ godMode }: QuestionsProps) {
                                     color="error"
                                     onClick={() => remove(idx)}
                                     disabled={values.options.length <= 2}
-                                    sx={{ minWidth: 40 }}
+                                    sx={smallButtonStyle}
                                   >-</Button>
                                 </Box>
                               </Paper>
@@ -186,10 +188,10 @@ export default function Questions({ godMode }: QuestionsProps) {
                       <Button
                         type="submit"
                         variant="contained"
-                        color="primary"
+                        color="secondary"
                         fullWidth
                         disabled={isSubmitting}
-                        sx={{ mt: 3 }}
+                        sx={actionButtonStyle}
                       >
                         Add Question
                       </Button>
@@ -211,15 +213,8 @@ export default function Questions({ godMode }: QuestionsProps) {
               </Typography>
               <List>
                 {questions.map((q) => (
-                  <ListItem key={q.id} sx={{ 
-                    mb: 1, 
-                    borderRadius: 2, 
-                    bgcolor: 'rgba(255, 255, 255, 0.1)', 
-                    '&:hover': {
-                      bgcolor: 'rgba(255, 255, 255, 0.2)',
-                    },
-                  }} alignItems="flex-start" secondaryAction={
-                    <Button variant="outlined" size="small" onClick={() => { setEditQuestion(q); setEditError(null); }}>Edit</Button>
+                  <ListItem key={q.id} sx={listItem} alignItems="flex-start" secondaryAction={
+                    <Button variant="contained" size="small" color="secondary" onClick={() => { setEditQuestion(q); setEditError(null); }}>Edit</Button>
                   }>
                     <ListItemText
                       primary={q.text}
@@ -294,7 +289,7 @@ export default function Questions({ godMode }: QuestionsProps) {
                                   color="error"
                                   onClick={() => remove(idx)}
                                   disabled={values.options.length <= 2}
-                                  sx={{ minWidth: 40, height: 40 }}
+                                  sx={smallButtonStyle}
                                 >-</Button>
                               </Box>
                             ))}
@@ -307,8 +302,8 @@ export default function Questions({ godMode }: QuestionsProps) {
                         )}
                       </FieldArray>
                       <DialogActions>
-                        <Button onClick={() => setEditQuestion(null)} color="secondary">Cancel</Button>
-                        <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>Save</Button>
+                        <Button onClick={() => setEditQuestion(null)} color="secondary" variant="contained">Cancel</Button>
+                        <Button type="submit" variant="contained" color="secondary" disabled={isSubmitting}>Save</Button>
                       </DialogActions>
                     </Form>
                   )}

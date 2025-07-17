@@ -4,6 +4,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Formik, Form } from 'formik';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import { cardStyle } from '../styles';
+import { backButtonBox, backButton, submitButton } from './AnswerQuestionnaire.styles';
 
 export default function AnswerQuestionnaire() {
   const { teamId } = useParams();
@@ -45,14 +47,15 @@ export default function AnswerQuestionnaire() {
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', mt: 8 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <IconButton onClick={() => navigate('/')} sx={{ mr: 1 }}>
+      <Box sx={backButtonBox}>
+        <IconButton onClick={() => navigate('/')} sx={backButton}>
           <ArrowBackIcon />
+          <Typography variant="body1" sx={{ ml: 1 }}>Back</Typography>
         </IconButton>
-        <Typography variant="h5">Select Category & Answer Questions</Typography>
       </Box>
-      <Card sx={{ mb: 2, p: 3 }}>
+      <Card sx={cardStyle}>
         <CardContent>
+          <Typography variant="h5" sx={{ mb: 2 }}>Select Category & Answer Questions</Typography>
           <FormControl fullWidth margin="normal">
             <InputLabel id="category-select-label" sx={{ color: 'secondary.main', '&.Mui-focused': { color: 'secondary.main' } }}>Select Category</InputLabel>
             <Select
@@ -133,16 +136,17 @@ export default function AnswerQuestionnaire() {
                       </Paper>
                     ))}
                   </Box>
-                  <Button 
-                    type="submit" 
-                    variant="contained" 
-                    color="secondary" 
-                    fullWidth 
-                    disabled={isSubmitting}
-                    sx={{ mt: 2 }}
-                  >
-                    Submit
-                  </Button>
+                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Button 
+                      type="submit" 
+                      variant="contained" 
+                      color="secondary" 
+                      disabled={isSubmitting || values.answers.some(a => !a)}
+                      sx={submitButton}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
                 </Form>
               )}
             </Formik>

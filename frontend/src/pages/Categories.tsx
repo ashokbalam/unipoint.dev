@@ -3,6 +3,8 @@ import { Box, Button, TextField, Typography, Alert, MenuItem, Select, InputLabel
 import { Formik, Form, Field, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { cardStyle } from '../styles';
+import { listItem } from './Categories.styles';
 
 const CategorySchema = Yup.object().shape({
   name: Yup.string().required('Category name is required'),
@@ -70,7 +72,7 @@ export default function Categories({ godMode }: CategoriesProps) {
         Categories
       </Typography>
       
-      <Card sx={{ mb: 4, p: 3 }}>
+      <Card sx={cardStyle}>
         <CardContent>
           <FormControl fullWidth margin="normal">
             <InputLabel id="tenant-select-label">Select Team</InputLabel>
@@ -191,17 +193,20 @@ export default function Categories({ godMode }: CategoriesProps) {
                               </Paper>
                             ))}
                             <Button
-                              variant="outlined"
+                              variant="contained"
+                              color="secondary"
                               onClick={() => push({ min: 0, max: 0, storyPoints: 0, note: '' })}
                               sx={{ mt: 1 }}
-                            >Add Range</Button>
+                            >
+                              Add Range
+                            </Button>
                           </>
                         )}
                       </FieldArray>
                       <Button
                         type="submit"
                         variant="contained"
-                        color="primary"
+                        color="secondary"
                         fullWidth
                         disabled={isSubmitting}
                         sx={{ mt: 3 }}
@@ -225,15 +230,8 @@ export default function Categories({ godMode }: CategoriesProps) {
               </Typography>
               <List>
                 {categories.map((cat) => (
-                  <ListItem key={cat.id} sx={{ 
-                    mb: 1, 
-                    borderRadius: 2, 
-                    bgcolor: 'rgba(255, 255, 255, 0.1)', 
-                    '&:hover': {
-                      bgcolor: 'rgba(255, 255, 255, 0.2)',
-                    },
-                  }} secondaryAction={
-                    <Button variant="outlined" size="small" onClick={() => { setEditCategory(cat); setEditError(null); }}>Edit</Button>
+                  <ListItem key={cat.id} sx={listItem} secondaryAction={
+                    <Button variant="contained" size="small" color="secondary" onClick={() => { setEditCategory(cat); setEditError(null); }}>Edit</Button>
                   }>
                     <ListItemText primary={cat.name} />
                   </ListItem>
@@ -342,8 +340,8 @@ export default function Categories({ godMode }: CategoriesProps) {
                         )}
                       </FieldArray>
                       <DialogActions>
-                        <Button onClick={() => setEditCategory(null)} color="secondary">Cancel</Button>
-                        <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>Save</Button>
+                        <Button onClick={() => setEditCategory(null)} color="secondary" variant="contained">Cancel</Button>
+                        <Button type="submit" variant="contained" color="secondary" disabled={isSubmitting}>Save</Button>
                       </DialogActions>
                     </Form>
                   )}
