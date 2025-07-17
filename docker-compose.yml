@@ -1,28 +1,14 @@
 version: '3.8'
 services:
-  db:
-    image: postgres:15
-    restart: always
-    environment:
-      POSTGRES_USER: unipoints_user
-      POSTGRES_PASSWORD: unipoints_pass
-      POSTGRES_DB: unipoints
-    ports:
-      - '5432:5432'
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
   backend:
     build: ./backend
     restart: always
     environment:
-      DB_HOST: db
+      DB_HOST: unipoint-db.clg8clb9ersw.us-east-2.rds.amazonaws.com
       DB_PORT: 5432
-      DB_USERNAME: unipoints_user
-      DB_PASSWORD: unipoints_pass
-      DB_DATABASE: unipoints
-    depends_on:
-      - db
+      DB_USERNAME: unipoint_user
+      DB_PASSWORD: unipoint_pass
+      DB_DATABASE: unipoint_db
     ports:
       - '4000:4000'
 
