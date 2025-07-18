@@ -213,7 +213,7 @@ export default function Categories({ godMode }: CategoriesProps) {
                       >
                         Add Category
                       </Button>
-                      {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
+                      {success && <Alert severity="success" icon={false} sx={{ mt: 2 }}>{success}</Alert>}
                     </Form>
                   )}
                 </Formik>

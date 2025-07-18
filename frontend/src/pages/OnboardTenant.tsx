@@ -72,7 +72,7 @@ export default function OnboardTenant({ godMode }: OnboardTenantProps) {
                 >
                   Onboard
                 </Button>
-                {success && <Alert severity="success" sx={{ mt: 3 }}>{success}</Alert>}
+                {success && <Alert severity="success" icon={false} sx={{ mt: 3 }}>{success}</Alert>}
                 {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
               </Form>
             )}

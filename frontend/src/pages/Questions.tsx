@@ -195,7 +195,7 @@ export default function Questions({ godMode }: QuestionsProps) {
                       >
                         Add Question
                       </Button>
-                      {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
+                      {success && <Alert severity="success" icon={false} sx={{ mt: 2 }}>{success}</Alert>}
                       {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
                     </Form>
                   )}

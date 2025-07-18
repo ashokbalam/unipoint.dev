@@ -50,12 +50,12 @@ export default function AnswerQuestionnaire() {
       <Box sx={backButtonBox}>
         <IconButton onClick={() => navigate('/')} sx={backButton}>
           <ArrowBackIcon />
-          <Typography variant="body1" sx={{ ml: 1 }}>Back</Typography>
+          <Typography variant="body1" sx={{ ml: 1 }}>Back to squad selection</Typography>
         </IconButton>
       </Box>
       <Card sx={cardStyle}>
         <CardContent>
-          <Typography variant="h5" sx={{ mb: 2 }}>Select Category & Answer Questions</Typography>
+          <Typography variant="h5" sx={{ mb: 2 }}>Pick a story type to estimate</Typography>
           <FormControl fullWidth margin="normal">
             <InputLabel id="category-select-label" sx={{ color: 'secondary.main', '&.Mui-focused': { color: 'secondary.main' } }}>Select Category</InputLabel>
             <Select
@@ -89,9 +89,6 @@ export default function AnswerQuestionnaire() {
       {selectedCategory && questions.length > 0 && (
         <Card sx={{ mb:2}}>
           <CardContent>
-            <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-              Answer Questions
-            </Typography>
             <Formik
               initialValues={{ answers: Array(questions.length).fill('') }}
               enableReinitialize
@@ -144,7 +141,7 @@ export default function AnswerQuestionnaire() {
                       disabled={isSubmitting || values.answers.some(a => !a)}
                       sx={submitButton}
                     >
-                      Submit
+                      Estimate
                     </Button>
                   </Box>
                 </Form>
@@ -163,7 +160,7 @@ export default function AnswerQuestionnaire() {
       {result && (
         <Card sx={{ mt:2}}>
           <CardContent>
-            <Alert severity="success" sx={{ fontSize: 18 }}>
+            <Alert severity="success" icon={false} sx={{ fontSize: 18 }}>
               <Box sx={{ display: 'flex', gap: 4, alignItems: 'center', justifyContent: 'center' }}>
                 <strong>Total Score:</strong> {result.total}
                 <strong>Story Points:</strong> {result.storyPoints}

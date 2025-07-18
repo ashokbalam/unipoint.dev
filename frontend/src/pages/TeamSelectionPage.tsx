@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Box, Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem, TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { teamBox, teamCard, teamTitle } from './TeamSelectionPage.styles';
 
+interface Tenant {
+  id: string;
+  name: string;
+}
+
 export default function TeamSelectionPage() {
-  const [tenants, setTenants] = useState<any[]>([]);
-  const [selectedTenant, setSelectedTenant] = useState('');
+  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [selectedTenant, setSelectedTenant] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,33 +29,37 @@ export default function TeamSelectionPage() {
       <Card sx={teamCard}>
         <CardContent>
           <Typography variant="h4" gutterBottom sx={teamTitle}>
-            Pick Your Team
+            Pick your squad!
           </Typography>
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="tenant-select-label" sx={{ color: 'secondary.main', '&.Mui-focused': { color: 'secondary.main' } }}>Team</InputLabel>
-            <Select
-              labelId="tenant-select-label"
-              value={selectedTenant}
-              label="Team"
-              onChange={e => handleSelect(e.target.value)}
-              sx={{
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'secondary.main',
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'secondary.main',
-                },
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'secondary.main',
-                },
-                color: 'secondary.main',
-              }}
-            >
-              {tenants.map((tenant) => (
-                <MenuItem key={tenant.id} value={tenant.id}>{tenant.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            fullWidth
+            options={tenants}
+            getOptionLabel={(option: Tenant) => option.name || ''}
+            value={tenants.find((t) => t.id === selectedTenant) || null}
+            onChange={(_event: React.SyntheticEvent, newValue: Tenant | null) => {
+              if (newValue) handleSelect(newValue.id);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Team"
+                variant="outlined"
+                sx={{
+                  color: 'secondary.main',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'secondary.main',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'secondary.main',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'secondary.main',
+                  },
+                }}
+              />
+            )}
+            isOptionEqualToValue={(option: Tenant, value: Tenant) => option.id === value.id}
+          />
         </CardContent>
       </Card>
     </Box>
