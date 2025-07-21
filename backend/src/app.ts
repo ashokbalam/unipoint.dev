@@ -6,19 +6,12 @@ import { DataSource } from 'typeorm';
 import { Tenant } from './models/Tenant';
 import { Category } from './models/Category';
 import { Question } from './models/Question';
-import tenantRoutes from './routes/tenantRoutes';
-import categoryRoutes from './routes/categoryRoutes';
-import questionRoutes from './routes/questionRoutes';
+import { TenantController } from './controllers/TenantController';
+import { CategoryController } from './controllers/CategoryController';
+import { QuestionController } from './controllers/QuestionController';
 
 // Load environment variables
 dotenv.config();
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(tenantRoutes);
-app.use(categoryRoutes);
-app.use(questionRoutes);
 
 // TypeORM DataSource setup
 export const AppDataSource = new DataSource({
@@ -36,20 +29,61 @@ export const AppDataSource = new DataSource({
   subscribers: [],
 });
 
+const seedDatabase = async () => {
+  const tenantRepo = AppDataSource.getRepository(Tenant);
+  const count = await tenantRepo.count();
+
+  if (count === 0) {
+    console.log('No tenants found. Seeding database...');
+    const defaultTeams = [
+      { name: 'Falcons' },
+      { name: 'Eagles' },
+      { name: 'Sharks' },
+      { name: 'Bears' },
+      { name: 'Tigers' },
+      { name: 'Panthers' },
+    ];
+    await tenantRepo.save(tenantRepo.create(defaultTeams));
+    console.log('Default teams have been seeded.');
+  } else {
+    console.log('Database already has tenants. Skipping seed.');
+  }
+};
+
 AppDataSource.initialize()
-  .then(() => {
+  .then(async () => {
     console.log('Data Source has been initialized!');
+    await seedDatabase();
+
+    const app = express();
+    app.use(cors());
+    app.use(express.json());
+    
+    // Tenant Routes
+    app.post('/tenants', TenantController.createTenant);
+    app.get('/tenants', TenantController.getTenants);
+    app.get('/tenants/:id', TenantController.getTenantById);
+
+    // Category Routes
+    app.post('/categories', CategoryController.createCategory);
+    app.get('/categories', CategoryController.getCategories);
+    app.get('/categories/:id', CategoryController.getCategoryById);
+    app.put('/categories/:id', CategoryController.updateCategory);
+
+    // Question Routes
+    app.post('/questions', QuestionController.createQuestion);
+    app.get('/questions', QuestionController.getQuestions);
+
+    // Health check route
+    app.get('/health', (_req, res) => {
+      res.json({ status: 'ok' });
+    });
+
+    const PORT = process.env.PORT || 4000;
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
   })
   .catch((err) => {
     console.error('Error during Data Source initialization', err);
-  });
-
-// Health check route
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok' });
-});
-
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-}); 
+  }); 

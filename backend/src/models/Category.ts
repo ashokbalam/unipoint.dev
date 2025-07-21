@@ -10,12 +10,12 @@ export class Category {
   @Column()
   name!: string;
 
-  @ManyToOne(() => Tenant, (tenant) => tenant.categories)
+  @ManyToOne(() => Tenant, (tenant: Tenant) => tenant.categories)
   tenant!: Tenant;
 
-  @OneToMany(() => Question, (question) => question.category)
+  @OneToMany(() => Question, (question: Question) => question.category)
   questions!: Question[];
 
   @Column('jsonb', { nullable: true })
-  rubric?: { min: number; max: number; storyPoints: number; note?: string }[];
+  rubric?: { min: number; max: number; storyPoints: number }[];
 } 
