@@ -11,134 +11,639 @@ import {
   searchContainer,
   suggestionText,
   suggestionSpan,
+  teamBox,
+  teamCard,
+  headerSvgWrapper,
+  headerSvg,
+  typewriterContainer,
+  typewriterText,
+  heroText,
+  fadeMessageContainer
 } from './TeamSelectionPage.styles';
 
+// Interfaces for the multi-step flow
 interface Team {
   id: string;
   name: string;
 }
 
+interface RubricRange {
+  min: number;
+  max: number;
+  storyPoints: number;
+}
+
+interface Category {
+  id: string;
+  name: string;
+  rubric: RubricRange[];
+}
+
+interface Option {
+  id: string;
+  label: string;
+  points: number;
+}
+
+interface Question {
+  id: string;
+  text: string;
+  options: Option[];
+  categoryId: string;
+}
+
+// Type for the current step in the flow
+type Step = 'team' | 'category' | 'questions' | 'results';
+
 const TeamSelectionPage: React.FC = () => {
-  const [search, setSearch] = useState('');
-  const [suggestions, setSuggestions] = useState<Team[]>([]);
-  const [selectedTenantId, setSelectedTenantId] = useState<string | null>(null);
-  const [arrowBtnHover, setArrowBtnHover] = useState(false);
+  // Navigation
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
-
+  
+  // Step management
+  const [currentStep, setCurrentStep] = useState<Step>('team');
+  
+  // Team selection state
+  const [search, setSearch] = useState('');
+  const [suggestions, setSuggestions] = useState<Team[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [arrowBtnHover, setArrowBtnHover] = useState(false);
+  
+  // Category selection state
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [categoryHover, setCategoryHover] = useState<string | null>(null);
+  
+  // Question answering state
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [answers, setAnswers] = useState<{[questionId: string]: number}>({});
+  
+  // Results state
+  const [totalScore, setTotalScore] = useState<number>(0);
+  const [storyPoints, setStoryPoints] = useState<number | null>(null);
+  
+  // UI state
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [backBtnHover, setBackBtnHover] = useState(false);
+  const [submitBtnHover, setSubmitBtnHover] = useState(false);
+  
+  // Team search and selection
   useEffect(() => {
     // Clear selection if search is cleared
     if (!search.trim()) {
       setSuggestions([]);
-      setSelectedTenantId(null);
+      setSelectedTeam(null);
       return;
     }
 
     // Debounce the search
     const debounceTimer = setTimeout(() => {
+      setLoading(true);
       axios.get(`http://localhost:4000/tenants?search=${search}`)
         .then(res => {
           setSuggestions(res.data);
+          setLoading(false);
         })
-        .catch(() => setSuggestions([]));
+        .catch(() => {
+          setSuggestions([]);
+          setError('Failed to load teams');
+          setLoading(false);
+        });
     }, 300); // 300ms delay
 
     return () => clearTimeout(debounceTimer);
   }, [search]);
 
   useEffect(() => {
-    // Check for an exact match from the suggestions to enable the arrow button
+    // Check for an exact match from the suggestions
     const exactMatch = suggestions.find(
       team => team.name.toLowerCase() === search.toLowerCase()
     );
     if (exactMatch) {
-      setSelectedTenantId(exactMatch.id);
+      setSelectedTeam(exactMatch);
     } else {
-      setSelectedTenantId(null);
+      setSelectedTeam(null);
     }
   }, [search, suggestions]);
   
+  // Load categories when a team is selected
+  useEffect(() => {
+    if (currentStep === 'category' && selectedTeam) {
+      setLoading(true);
+      axios.get(`http://localhost:4000/categories?tenantId=${selectedTeam.id}`)
+        .then(res => {
+          setCategories(res.data);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error('Error loading categories:', err);
+          setError('Failed to load categories');
+          setLoading(false);
+        });
+    }
+  }, [currentStep, selectedTeam]);
+  
+  // Load questions when a category is selected
+  useEffect(() => {
+    if (currentStep === 'questions' && selectedCategory) {
+      setLoading(true);
+      axios.get(`http://localhost:4000/questions?categoryId=${selectedCategory.id}`)
+        .then(res => {
+          setQuestions(res.data);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error('Error loading questions:', err);
+          setError('Failed to load questions');
+          setLoading(false);
+        });
+    }
+  }, [currentStep, selectedCategory]);
+  
+  // Auto-suggestion text for team search
   const suggestedText =
     suggestions.find(s => s.name.toLowerCase().startsWith(search.toLowerCase()))
       ?.name || '';
+  
+  // Handle team selection and move to next step
+  const handleTeamSelect = () => {
+    if (selectedTeam) {
+      setCurrentStep('category');
+    }
+  };
+  
+  // Handle category selection and move to next step
+  const handleCategorySelect = (category: Category) => {
+    setSelectedCategory(category);
+    setCurrentStep('questions');
+  };
+  
+  // Handle answer selection
+  const handleAnswerSelect = (questionId: string, points: number) => {
+    setAnswers(prev => ({
+      ...prev,
+      [questionId]: points
+    }));
+  };
+  
+  // Check if all questions have been answered
+  const allQuestionsAnswered = questions.length > 0 && 
+    questions.every(q => answers[q.id] !== undefined);
+  
+  // Submit answers and calculate results
+  const handleSubmitAnswers = () => {
+    if (!allQuestionsAnswered || !selectedCategory) return;
+    
+    // Calculate total score
+    const total = Object.values(answers).reduce((sum, points) => sum + points, 0);
+    setTotalScore(total);
+    
+    // Calculate story points based on rubric
+    const { rubric } = selectedCategory;
+    const matchingRange = rubric.find(r => total >= r.min && total <= r.max);
+    
+    if (matchingRange) {
+      setStoryPoints(matchingRange.storyPoints);
+    } else {
+      setStoryPoints(null);
+    }
+    
+    setCurrentStep('results');
+  };
+  
+  // Go back to previous step
+  const handleBack = () => {
+    if (currentStep === 'category') {
+      setCurrentStep('team');
+      setSelectedCategory(null);
+    } else if (currentStep === 'questions') {
+      setCurrentStep('category');
+      setQuestions([]);
+      setAnswers({});
+    } else if (currentStep === 'results') {
+      setCurrentStep('questions');
+      setTotalScore(0);
+      setStoryPoints(null);
+    }
+  };
+  
+  // Reset the whole flow
+  const handleReset = () => {
+    setCurrentStep('team');
+    setSelectedTeam(null);
+    setSelectedCategory(null);
+    setQuestions([]);
+    setAnswers({});
+    setTotalScore(0);
+    setStoryPoints(null);
+    setSearch('');
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+  
+  // Common styles
+  const backButton = {
+    background: 'none',
+    border: 'none',
+    color: 'var(--color-primary)',
+    padding: '0.5rem',
+    cursor: 'pointer',
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.25rem',
+    transition: 'color 0.2s',
+  };
+  
+  const backButtonHover = {
+    color: '#4338ca',
+  };
+  
+  const submitButton = {
+    backgroundColor: 'var(--color-primary)',
+    color: 'white',
+    border: 'none',
+    borderRadius: '0.375rem',
+    padding: '0.75rem 1.5rem',
+    fontSize: '1rem',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+    marginTop: '1.5rem',
+    width: '100%',
+  };
+  
+  const submitButtonHover = {
+    backgroundColor: '#4338ca',
+  };
+  
+  const submitButtonDisabled = {
+    ...submitButton,
+    backgroundColor: '#9ca3af',
+    cursor: 'not-allowed',
+  };
+  
+  const categoryCard = {
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    border: '1px solid #e5e7eb',
+    marginBottom: '0.75rem',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+  };
+  
+  const categoryCardHover = {
+    backgroundColor: '#f9fafb',
+    borderColor: 'var(--color-primary)',
+    transform: 'translateY(-2px)',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+  };
+  
+  const categoryName = {
+    fontSize: '1.125rem',
+    fontWeight: 600,
+    color: 'var(--color-text)',
+    marginBottom: '0.25rem',
+  };
+  
+  const categoryDescription = {
+    fontSize: '0.875rem',
+    color: '#6b7280',
+  };
+  
+  const questionContainer = {
+    marginBottom: '1.5rem',
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    border: '1px solid #e5e7eb',
+  };
+  
+  const questionText = {
+    fontSize: '1rem',
+    fontWeight: 600,
+    marginBottom: '0.75rem',
+    color: 'var(--color-text)',
+  };
+  
+  const optionContainer = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '0.5rem',
+    cursor: 'pointer',
+    borderRadius: '0.25rem',
+    transition: 'background-color 0.2s',
+  };
+  
+  const optionContainerHover = {
+    backgroundColor: '#f9fafb',
+  };
+  
+  const optionLabel = {
+    fontSize: '0.875rem',
+    color: 'var(--color-text)',
+  };
+  
+  const optionPoints = {
+    fontSize: '0.75rem',
+    color: '#6b7280',
+    marginLeft: 'auto',
+  };
+  
+  const resultContainer = {
+    textAlign: 'center' as const,
+    padding: '2rem',
+  };
+  
+  const resultTitle = {
+    fontSize: '1.5rem',
+    fontWeight: 700,
+    color: 'var(--color-text)',
+    marginBottom: '1rem',
+  };
+  
+  const resultScore = {
+    fontSize: '3rem',
+    fontWeight: 800,
+    color: 'var(--color-primary)',
+    marginBottom: '0.5rem',
+  };
+  
+  const resultLabel = {
+    fontSize: '1rem',
+    color: '#6b7280',
+    marginBottom: '2rem',
+  };
+  
+  const resultStoryPoints = {
+    fontSize: '2rem',
+    fontWeight: 700,
+    color: 'var(--color-secondary)',
+    marginBottom: '0.5rem',
+  };
+  
+  // Render different content based on current step
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 'team':
+        return (
+          <div style={contentWrapper}>
+            <h2 style={teamTitle}>Pick Your Squad</h2>
+            <div style={searchContainer}>
+              <input
+                ref={inputRef}
+                type="text"
+                style={{
+                  ...searchInput,
+                  borderColor: selectedTeam ? 'var(--color-primary)' : 'black',
+                  boxShadow: selectedTeam ? '0 0 0 3px rgba(94, 43, 255, 0.1)' : 'none',
+                  fontWeight: '300',
+                  ...(document.activeElement === inputRef?.current ? {
+                    borderColor: 'var(--color-primary)',
+                    boxShadow: '0 0 0 3px rgba(94,43,255,0.1)'
+                  } : {})
+                }}
+                placeholder="start typing your squad name"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Tab' && suggestedText) {
+                    e.preventDefault();
+                    const match = suggestions.find(s => s.name === suggestedText);
+                    if (match) {
+                      setSearch(match.name);
+                      setSelectedTeam(match);
+                    }
+                  }
+                  if (e.key === 'Enter' && selectedTeam) {
+                    e.preventDefault();
+                    handleTeamSelect();
+                  }
+                }}
+              />
+              {suggestedText && search && (
+                <div style={suggestionText}>
+                  <span>{search}</span>
+                  <span style={suggestionSpan}>
+                    {suggestedText.substring(search.length)}
+                  </span>
+                </div>
+              )}
+              <button
+                onClick={handleTeamSelect}
+                disabled={!selectedTeam}
+                style={selectedTeam ? (arrowBtnHover ? { ...arrowButton, background: 'var(--color-primary)' } : arrowButton) : arrowButtonDisabled}
+                onMouseEnter={() => setArrowBtnHover(true)}
+                onMouseLeave={() => setArrowBtnHover(false)}
+              >
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+            <div style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', textAlign: 'right', width: '100%', minHeight: '1.25rem' }}>
+              {(() => {
+                if (loading) {
+                  return 'searching...';
+                }
+                if (selectedTeam) {
+                  return 'hit enter to continue';
+                }
+                if (search.trim().length > 2 && suggestions.length === 0) {
+                  return "couldn't find your squad";
+                }
+                if (suggestedText) {
+                  return 'hit tab to autofill';
+                }
+                return '';
+              })()}
+            </div>
+          </div>
+        );
+        
+      case 'category':
+        return (
+          <div style={contentWrapper}>
+            {currentStep !== 'team' && (
+              <button
+                style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
+                onClick={handleBack}
+                onMouseEnter={() => setBackBtnHover(true)}
+                onMouseLeave={() => setBackBtnHover(false)}
+              >
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+              </button>
+            )}
+            
+            <h2 style={teamTitle}>Select a Category</h2>
+            {selectedTeam && (
+              <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1.5rem', textAlign: 'center' }}>
+                Team: {selectedTeam.name}
+              </div>
+            )}
+            
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '2rem' }}>
+                Loading categories...
+              </div>
+            ) : categories.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '2rem' }}>
+                No categories found for this team.
+              </div>
+            ) : (
+              <div>
+                {categories.map(category => (
+                  <div
+                    key={category.id}
+                    style={categoryHover === category.id ? { ...categoryCard, ...categoryCardHover } : categoryCard}
+                    onClick={() => handleCategorySelect(category)}
+                    onMouseEnter={() => setCategoryHover(category.id)}
+                    onMouseLeave={() => setCategoryHover(null)}
+                  >
+                    <div style={categoryName}>{category.name}</div>
+                    <div style={categoryDescription}>
+                      {category.rubric?.length || 0} story point ranges defined
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+        
+      case 'questions':
+        return (
+          <div style={contentWrapper}>
+            <button
+              style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
+              onClick={handleBack}
+              onMouseEnter={() => setBackBtnHover(true)}
+              onMouseLeave={() => setBackBtnHover(false)}
+            >
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back
+            </button>
+            
+            <h2 style={teamTitle}>Answer Questions</h2>
+            {selectedTeam && selectedCategory && (
+              <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1.5rem', textAlign: 'center' }}>
+                Team: {selectedTeam.name} | Category: {selectedCategory.name}
+              </div>
+            )}
+            
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '2rem' }}>
+                Loading questions...
+              </div>
+            ) : questions.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '2rem' }}>
+                No questions found for this category.
+              </div>
+            ) : (
+              <div>
+                {questions.map((question, index) => (
+                  <div key={question.id} style={questionContainer}>
+                    <div style={questionText}>{index + 1}. {question.text}</div>
+                    {question.options.map(option => (
+                      <label
+                        key={option.id}
+                        style={{
+                          ...optionContainer,
+                          ...(answers[question.id] === option.points ? { backgroundColor: '#f0f9ff', borderColor: '#3b82f6' } : {})
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name={question.id}
+                          checked={answers[question.id] === option.points}
+                          onChange={() => handleAnswerSelect(question.id, option.points)}
+                          style={{ marginRight: '0.5rem' }}
+                        />
+                        <span style={optionLabel}>{option.label}</span>
+                        <span style={optionPoints}>{option.points} points</span>
+                      </label>
+                    ))}
+                  </div>
+                ))}
+                
+                <button
+                  onClick={handleSubmitAnswers}
+                  disabled={!allQuestionsAnswered}
+                  style={
+                    !allQuestionsAnswered
+                      ? submitButtonDisabled
+                      : submitBtnHover
+                      ? { ...submitButton, ...submitButtonHover }
+                      : submitButton
+                  }
+                  onMouseEnter={() => setSubmitBtnHover(true)}
+                  onMouseLeave={() => setSubmitBtnHover(false)}
+                >
+                  Submit Answers
+                </button>
+              </div>
+            )}
+          </div>
+        );
+        
+      case 'results':
+        return (
+          <div style={contentWrapper}>
+            <button
+              style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
+              onClick={handleBack}
+              onMouseEnter={() => setBackBtnHover(true)}
+              onMouseLeave={() => setBackBtnHover(false)}
+            >
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Questions
+            </button>
+            
+            <div style={resultContainer}>
+              <div style={resultTitle}>Estimation Results</div>
+              
+              <div style={resultScore}>{totalScore}</div>
+              <div style={resultLabel}>Total Points</div>
+              
+              <div style={resultStoryPoints}>
+                {storyPoints !== null ? storyPoints : '?'}
+              </div>
+              <div style={resultLabel}>Story Points</div>
+              
+              <button
+                onClick={handleReset}
+                style={submitBtnHover ? { ...submitButton, ...submitButtonHover } : submitButton}
+                onMouseEnter={() => setSubmitBtnHover(true)}
+                onMouseLeave={() => setSubmitBtnHover(false)}
+              >
+                Start New Estimation
+              </button>
+            </div>
+          </div>
+        );
+    }
+  };
 
   return (
     <div style={pageContainer}>
-      <div style={contentWrapper}>
-        <h2 style={teamTitle}>Pick Your Squad</h2>
-        <div style={searchContainer}>
-          <input
-            ref={inputRef}
-            type="text"
-            style={{
-              ...searchInput,
-              borderColor: selectedTenantId ? 'var(--color-primary)' : 'black',
-              boxShadow: selectedTenantId ? '0 0 0 3px rgba(94, 43, 255, 0.1)' : 'none',
-              fontWeight: '300', // placeholder:font-thin
-              ...(document.activeElement === inputRef?.current ? {
-                borderColor: 'var(--color-primary)',
-                boxShadow: '0 0 0 3px rgba(94,43,255,0.1)'
-              } : {})
-            }}
-            placeholder="start typing your squad name"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => {
-              if (e.key === 'Tab' && suggestedText) {
-                e.preventDefault();
-                const match = suggestions.find(s => s.name === suggestedText);
-                if (match) {
-                  setSearch(match.name);
-                  setSelectedTenantId(match.id);
-                }
-              }
-              if (e.key === 'Enter' && selectedTenantId) {
-                e.preventDefault();
-                navigate('/categories', { state: { tenantId: selectedTenantId } });
-              }
-            }}
-          />
-          {suggestedText && search && (
-            <div style={suggestionText}>
-              <span>{search}</span>
-              <span style={suggestionSpan}>
-                {suggestedText.substring(search.length)}
-              </span>
-            </div>
-          )}
-          <button
-            onClick={() => {
-              if (selectedTenantId) {
-                navigate('/categories', { state: { tenantId: selectedTenantId } });
-              }
-            }}
-            disabled={!selectedTenantId}
-            style={selectedTenantId ? (arrowBtnHover ? { ...arrowButton, background: 'var(--color-primary)' } : arrowButton) : arrowButtonDisabled}
-            onMouseEnter={() => setArrowBtnHover(true)}
-            onMouseLeave={() => setArrowBtnHover(false)}
-          >
-            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+      {renderStepContent()}
+      {error && (
+        <div style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}>
+          {error}
         </div>
-      </div>
-      <div style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', textAlign: 'right', width: '100%', minHeight: '1.25rem' }}>
-        {(() => {
-          if (selectedTenantId) {
-            return 'hit enter to continue';
-          }
-          if (search.trim().length > 2 && suggestions.length === 0) {
-            return "couldn't find your squad";
-          }
-          if (suggestedText) {
-            return 'hit tab to autofill';
-          }
-          return '';
-        })()}
-      </div>
+      )}
     </div>
   );
 };
 
-export default TeamSelectionPage; 
+export default TeamSelectionPage;
