@@ -215,4 +215,4 @@ export const storyPoints = {
 
 export const boldText = {
   fontWeight: 700, // font-bold
-}; 
+};
