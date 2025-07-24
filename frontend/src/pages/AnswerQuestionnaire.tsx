@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  container,
   title,
   thankYou,
   form as formStyle,
@@ -10,6 +9,14 @@ import {
   submitButton,
   submitButtonHover
 } from './AnswerQuestionnaire.styles';
+
+// Common boxed layout styles
+import {
+  pageWrapper,
+  boxedContainer,
+  containerHeader,
+  containerContent
+} from '../App.styles';
 
 const mockQuestions = [
   { id: 1, text: 'What is your team’s main goal?' },
@@ -34,36 +41,43 @@ const AnswerQuestionnaire: React.FC = () => {
   };
 
   return (
-    <div style={container}>
-      <h2 style={title}>Team Questionnaire</h2>
-      {submitted ? (
-        <div style={thankYou}>Thank you for submitting your answers!</div>
-      ) : (
-        <form onSubmit={handleSubmit} style={formStyle}>
-          {mockQuestions.map((q) => (
-            <div key={q.id}>
-              <label style={labelStyle}>{q.text}</label>
-              <input
-                type="text"
-                style={inputFocusId === q.id ? { ...inputStyle, ...inputFocus } : inputStyle}
-                value={answers[q.id] || ''}
-                onChange={e => handleChange(q.id, e.target.value)}
-                onFocus={() => setInputFocusId(q.id)}
-                onBlur={() => setInputFocusId(null)}
-                placeholder="Your answer"
-              />
-            </div>
-          ))}
-          <button
-            type="submit"
-            style={submitBtnHover ? { ...submitButton, ...submitButtonHover } : submitButton}
-            onMouseEnter={() => setSubmitBtnHover(true)}
-            onMouseLeave={() => setSubmitBtnHover(false)}
-          >
-            Submit Answers
-          </button>
-        </form>
-      )}
+    <div style={pageWrapper}>
+      <div style={boxedContainer}>
+        <div style={containerHeader}>
+          <h2 style={title}>Team Questionnaire</h2>
+        </div>
+
+        <div style={containerContent}>
+          {submitted ? (
+            <div style={thankYou}>Thank you for submitting your answers!</div>
+          ) : (
+            <form onSubmit={handleSubmit} style={formStyle}>
+              {mockQuestions.map((q) => (
+                <div key={q.id}>
+                  <label style={labelStyle}>{q.text}</label>
+                  <input
+                    type="text"
+                    style={inputFocusId === q.id ? { ...inputStyle, ...inputFocus } : inputStyle}
+                    value={answers[q.id] || ''}
+                    onChange={e => handleChange(q.id, e.target.value)}
+                    onFocus={() => setInputFocusId(q.id)}
+                    onBlur={() => setInputFocusId(null)}
+                    placeholder="Your answer"
+                  />
+                </div>
+              ))}
+              <button
+                type="submit"
+                style={submitBtnHover ? { ...submitButton, ...submitButtonHover } : submitButton}
+                onMouseEnter={() => setSubmitBtnHover(true)}
+                onMouseLeave={() => setSubmitBtnHover(false)}
+              >
+                Submit Answers
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

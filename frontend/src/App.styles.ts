@@ -380,3 +380,50 @@ export const fadeMessageText = {
   transition: 'opacity 1s',
   fontFamily: 'var(--font-body)'
 };
+
+/* ------------------------------------------------------------------
+ * Common Boxed Container for Non-Home Pages
+ * ----------------------------------------------------------------- */
+
+// Outer wrapper to center the boxed container and fill viewport
+export const pageWrapper = {
+  width: '100%',
+  minHeight: '100vh',
+  background: 'var(--color-background)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  paddingTop: '2rem',
+  paddingBottom: '2rem',
+};
+
+// Main boxed container used by admin/secondary pages
+export const boxedContainer = {
+  width: '90%',
+  maxWidth: '1200px',
+  minHeight: '80vh',
+  backgroundColor: '#ffffff',
+  borderRadius: '1.5rem',
+  border: '1px solid #e0e7ff',
+  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+  padding: '2rem',
+  margin: '0 auto',
+  display: 'flex',
+  flexDirection: 'column' as const,
+};
+
+// Optional header section inside boxed container
+export const containerHeader = {
+  marginBottom: '1.5rem',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+};
+
+// Scrollable / flexible content area inside boxed container
+export const containerContent = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column' as const,
+  overflowY: 'auto' as const,
+};

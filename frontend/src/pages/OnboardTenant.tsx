@@ -5,8 +5,6 @@ import axios from 'axios';
  * Styles
  * ----------------------------------------------------------------- */
 import {
-  pageContainer,
-  titleSection,
   pageTitle,
   pageSubtitle,
   formContainer,
@@ -19,6 +17,12 @@ import {
   submitButton,
   submitButtonDisabled,
 } from './OnboardTenant.styles';
+import {
+  pageWrapper,
+  boxedContainer,
+  containerHeader,
+  containerContent,
+} from '../App.styles';
 
 const OnboardTenant: React.FC = () => {
   const [teamName, setTeamName] = useState('');
@@ -58,19 +62,21 @@ const OnboardTenant: React.FC = () => {
   };
 
   return (
-    <div style={pageContainer}>
-      {/* Header */}
-      <section style={titleSection}>
+    <div style={pageWrapper}>
+      <div style={boxedContainer}>
+        {/* Header */}
+        <section style={containerHeader}>
         <h1 style={pageTitle}>Create New Team</h1>
         <p style={pageSubtitle}>
           Add a new tenant (squad) to your workspace. Give it a memorable name so your team can easily
           find it later.
         </p>
-      </section>
+        </section>
 
-      {/* Form Card */}
-      <div style={formContainer}>
-        <form style={formSection} onSubmit={handleSubmit} noValidate>
+        {/* Form Card */}
+        <div style={containerContent}>
+        <div style={formContainer}>
+          <form style={formSection} onSubmit={handleSubmit} noValidate>
           <div style={inputGroup}>
             <label htmlFor="teamName" style={inputLabel}>
               Team Name
@@ -120,9 +126,10 @@ const OnboardTenant: React.FC = () => {
           >
             {isSubmitting ? 'Creating…' : 'Create Team'}
           </button>
-        </form>
+          </form>
+        </div>
+        </div>
       </div>
-
     </div>
   );
 };
