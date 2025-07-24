@@ -21,8 +21,6 @@ import {
   addInputFocus,
   addError,
   addSuccess,
-  addButton,
-  addButtonHover,
   questionsScrollArea,
   thankYou,
   storyPoints,
@@ -54,19 +52,15 @@ interface RubricRange {
 interface QuestionsProps {
   tenantId: string;
   categoryId: string;
-  godMode: boolean;
 }
 
-const Questions: React.FC<QuestionsProps> = ({ tenantId, categoryId, godMode }) => {
+const Questions: React.FC<QuestionsProps> = ({ tenantId, categoryId }) => {
   const navigate = useNavigate();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [rubric, setRubric] = useState<RubricRange[]>([]);
-  const [newQuestion, setNewQuestion] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [answers, setAnswers] = useState<Answer>({});
   const [backBtnHover, setBackBtnHover] = useState(false);
-  const [addBtnHover, setAddBtnHover] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [totalScore, setTotalScore] = useState<number | null>(null);
   const [storyPoint, setStoryPoint] = useState<number | string | null>(null);
@@ -94,33 +88,6 @@ const Questions: React.FC<QuestionsProps> = ({ tenantId, categoryId, godMode }) 
 
   const handleOptionChange = (questionId: string, points: number) => {
     setAnswers({ ...answers, [questionId]: points });
-  };
-
-  const handleAddQuestion = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    if (!newQuestion.trim()) {
-      setError('Question cannot be empty.');
-      return;
-    }
-    try {
-      const res = await axios.post('http://localhost:4000/questions', {
-        text: newQuestion.trim(),
-        options: [
-          { label: 'Option 1', points: 1 },
-          { label: 'Option 2', points: 2 },
-          { label: 'Option 3', points: 3 }
-        ],
-        tenantId,
-        categoryId,
-      });
-      setQuestions([...questions, res.data]);
-      setSuccess('Question added!');
-      setNewQuestion('');
-    } catch {
-      setError('Failed to add question.');
-    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -163,33 +130,6 @@ const Questions: React.FC<QuestionsProps> = ({ tenantId, categoryId, godMode }) 
       </button>
       <div style={pageContainer}>
         <h1 style={heading}>Questionnaire</h1>
-
-        {godMode && (
-          <form onSubmit={handleAddQuestion} style={addForm}>
-            <label style={addLabel}>Add a New Question</label>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div style={{ flex: 1 }}>
-                <input
-                  type="text"
-                  style={newQuestion.trim() ? addInput : addInputFocus}
-                  value={newQuestion}
-                  onChange={e => setNewQuestion(e.target.value)}
-                  placeholder="Question text"
-                />
-                {error && <div style={addError}>{error}</div>}
-                {success && <div style={addSuccess}>{success}</div>}
-              </div>
-              <button
-                type="submit"
-                style={addBtnHover ? { ...addButton, ...addButtonHover } : addButton}
-                onMouseEnter={() => setAddBtnHover(true)}
-                onMouseLeave={() => setAddBtnHover(false)}
-              >
-                Add
-              </button>
-            </div>
-          </form>
-        )}
 
         {submitted ? (
           <div style={thankYou}>

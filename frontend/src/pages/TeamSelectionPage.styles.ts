@@ -211,7 +211,7 @@ export const headerSvgWrapper = {
 export const headerSvg = {
   width: '100%',
   height: 'auto',
-  maxWidth: '400px', // reduced from 600px
+  maxWidth: '300px',
   display: 'block',
 };
 

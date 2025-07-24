@@ -59,9 +59,13 @@ export const submitButton = {
   fontWeight: 600, // font-semibold
   border: 'none',
   cursor: 'pointer',
-  transition: 'background 0.2s',
+  /* enable smooth scaling */
+  transform: 'scale(1)',
+  display: 'inline-block',
+  transition: 'background 0.2s, transform 0.2s',
 };
 
 export const submitButtonHover = {
   background: '#3730a3', // hover:bg-indigo-700
+  transform: 'scale(1.08)', // 8% enlargement on hover
 }; 

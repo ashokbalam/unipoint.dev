@@ -76,6 +76,83 @@ export const contentWrapper = {
   paddingRight: '0.5rem'
 };
 
+/* ------------------------------------------------------------------
+ * Right-side Navigation (Home / Teams / Category / Questions)
+ * ----------------------------------------------------------------- */
+
+// Wrapper that pins the navigation to the right edge and centres it vertically
+export const rightNavigation = {
+  position: 'fixed' as const,
+  top: '50%',
+  right: '1.25rem', // ~20px
+  /* base: centred vertically, no extra scale */
+  transform: 'translateY(-50%) scale(1)',
+  transformOrigin: 'center',
+  transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+  zIndex: zIndex.header, // same layer as header so it's always visible
+  pointerEvents: 'auto' as const,
+};
+
+/* Hover state for the entire navigation container (12% larger) */
+export const rightNavigationHover = {
+  ...rightNavigation,
+  transform: 'translateY(-50%) scale(1.12)',
+};
+
+// Unordered list that stacks items vertically with equal spacing
+export const navigationList = {
+  listStyle: 'none',
+  margin: 0,
+  padding: 0,
+  display: 'flex',
+  flexDirection: 'column' as const,
+  gap: '0.75rem', // vertical spacing between links
+  alignItems: 'flex-end',
+};
+
+// Wrapper for each individual nav entry (for potential future badges)
+export const navigationItem = {
+  display: 'block',
+};
+
+// Base link style – small caps, primary colour hover
+export const navigationLink = {
+  textDecoration: 'none',
+  /* slightly larger for better prominence */
+  fontSize: '1.375rem',             // 22px
+  fontWeight: 600,
+  letterSpacing: '0.05em',
+  /* Default to secondary (orange) so links are orange even before hover */
+  color: 'var(--color-secondary)',
+  fontFamily: 'var(--font-heading)',
+  // Provide subtle default scale for smooth transform animation start
+  transform: 'scale(1)',
+  // Ensure transforms affect the element (required for scaling)
+  display: 'inline-block',
+  transformOrigin: 'center',
+  borderBottom: '2px solid transparent', // placeholder for active underline
+  transition: 'color 0.2s ease, transform 0.2s ease, border-bottom 0.2s ease',
+  cursor: 'pointer',
+};
+
+// Navigation link hover state (for JavaScript event handling)
+export const navigationLinkHover = {
+  color: 'var(--color-secondary)',         // switch to secondary colour
+  transform: 'scale(1.15)',                // 15% scale-up on hover
+};
+
+// Active route styling (e.g., via NavLink "isActive")
+export const navigationLinkActive = {
+  color: 'var(--color-secondary)',         // active colour matches hover
+  borderBottom: '2px solid var(--color-secondary)', // underline for active page
+};
+
+// Disabled / God-Mode-locked link styling
+export const navigationLinkDisabled = {
+  ...navigationLink,
+  textDecoration: 'line-through',
+};
+
 // God Mode Button Styles
 export const godModeButton = {
   border: '1px solid var(--color-primary)',
@@ -102,15 +179,19 @@ export const godModeButton = {
   whiteSpace: 'nowrap',
   verticalAlign: 'middle',
   lineHeight: '1.25',
-  ':hover': {
-    backgroundColor: 'var(--color-primary)',
-    color: 'white',
-    borderColor: 'var(--color-primary)'
-  },
-  ':focus': {
-    boxShadow: '0 0 0 2px white, 0 0 0 4px var(--color-primary)',
-    outline: 'none'
-  }
+};
+
+// God Mode Button hover state (for JavaScript event handling)
+export const godModeButtonHover = {
+  backgroundColor: 'var(--color-primary)',
+  color: 'white',
+  borderColor: 'var(--color-primary)'
+};
+
+// God Mode Button focus state (for JavaScript event handling)
+export const godModeButtonFocus = {
+  boxShadow: '0 0 0 2px white, 0 0 0 4px var(--color-primary)',
+  outline: 'none'
 };
 
 export const godModeButtonContainer = {
@@ -124,11 +205,17 @@ export const godModeButtonContainer = {
 /* Renaming godModeDialog to godModeOverlay and adjusting styles */
 export const godModeOverlay = {
   position: 'fixed' as const,
+  /* Translucent dark layer that sits below the slider but above page */
   inset: '0',
   zIndex: zIndex.godModeOverlay,
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  transition: 'opacity 0.3s ease-in-out',
+  backgroundColor: 'rgba(0, 0, 0, 0.35)',
+  transition: 'opacity 0.3s ease',
 };
+
+/* Frosted-glass backdrop (optional, can be used instead of simple overlay) */
+export const godModeBackdrop = {};
+export const godModeBackdropOpen = {};
+export const godModeContainer = {};
 
 /* New styles for the slider */
 export const godModeSlider = {
@@ -140,14 +227,18 @@ export const godModeSlider = {
   backgroundColor: '#ffffff',
   boxShadow: '-10px 0 20px -10px rgba(0, 0, 0, 0.1)',
   zIndex: zIndex.godModeSlider,
-  transform: 'translateX(100%)', // Initially hidden
-  transition: 'transform 0.3s ease-in-out',
+  /* Hidden state: off-screen to the right, slightly scaled down & fully transparent */
+  transform: 'translateX(100%)',
+  opacity: 0,
+  transition: 'transform 0.3s ease, opacity 0.3s ease',
   display: 'flex',
   flexDirection: 'column' as const,
 };
 
 export const godModeSliderOpen = {
+  /* Visible state: slides in & fades in */
   transform: 'translateX(0)',
+  opacity: 1,
 };
 
 /* Renaming godModeDialogContent to godModeSliderContent */
@@ -171,6 +262,7 @@ export const godModeSliderText = {
   fontFamily: 'var(--font-body)',
   color: 'var(--color-text)',
 };
+
 
 export const godModeInput = {
   width: '100%',
@@ -236,10 +328,12 @@ export const godModeMenuItem = {
   transition: 'all 0.2s ease',
   fontSize: '0.875rem',
   fontWeight: '500',
-  ':hover': {
-    backgroundColor: 'var(--color-background)',
-    borderColor: 'var(--color-primary)'
-  }
+};
+
+// God Mode Menu Item hover state (for JavaScript event handling)
+export const godModeMenuItemHover = {
+  backgroundColor: 'var(--color-background)',
+  borderColor: 'var(--color-primary)'
 };
 
 export const godModeOptionsContainer = {
@@ -285,4 +379,4 @@ export const fadeMessageText = {
   opacity: 1,
   transition: 'opacity 1s',
   fontFamily: 'var(--font-body)'
-}; 
+};

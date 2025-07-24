@@ -63,12 +63,16 @@ export const categoryButton = {
   fontFamily: 'var(--font-body)',
   boxShadow: '0 1px 2px 0 rgba(0,0,0,0.03)',
   cursor: 'pointer',
-  transition: 'background 0.2s, box-shadow 0.2s',
+  /* enable smooth scaling */
+  transform: 'scale(1)',
+  display: 'inline-block',
+  transition: 'background 0.2s, box-shadow 0.2s, transform 0.2s',
 };
 
 export const categoryButtonHover = {
   background: '#f9fafb',
   boxShadow: '0 1px 3px 0 rgba(0,0,0,0.05)',
+  transform: 'scale(1.08)',   // 8% enlargement on hover
 };
 
 export const loadingText = {

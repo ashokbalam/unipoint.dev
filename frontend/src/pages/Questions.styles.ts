@@ -179,11 +179,15 @@ export const addButton = {
   fontFamily: 'var(--font-body)',
   border: 'none',
   cursor: 'pointer',
-  transition: 'background 0.2s',
+  /* enable smooth scaling */
+  transform: 'scale(1)',
+  display: 'inline-block',
+  transition: 'background 0.2s, transform 0.2s',
 };
 
 export const addButtonHover = {
   background: '#4b1fd1',
+  transform: 'scale(1.08)',  // 8% enlargement on hover
 };
 
 export const questionsScrollArea = {
