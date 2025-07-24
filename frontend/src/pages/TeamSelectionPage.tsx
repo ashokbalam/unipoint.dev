@@ -5,21 +5,18 @@ import {
   searchInput,
   arrowButton,
   arrowButtonDisabled,
-  teamTitle,
-  pageContainer,
-  contentWrapper,
   searchContainer,
   suggestionText,
   suggestionSpan,
-  teamBox,
-  teamCard,
-  headerSvgWrapper,
-  headerSvg,
-  typewriterContainer,
-  typewriterText,
-  heroText,
-  fadeMessageContainer
 } from './TeamSelectionPage.styles';
+
+// Import common container styles
+import {
+  pageWrapper,
+  boxedContainer,
+  containerHeader,
+  containerContent,
+} from '../App.styles';
 
 // Interfaces for the multi-step flow
 interface Team {
@@ -244,6 +241,14 @@ const TeamSelectionPage: React.FC = () => {
   };
   
   // Common styles
+  const pageTitle = {
+    fontSize: '1.75rem',
+    fontWeight: 700,
+    color: 'var(--color-text)',
+    marginBottom: '1.5rem',
+    textAlign: 'center' as const,
+  };
+  
   const backButton = {
     background: 'none',
     border: 'none',
@@ -390,84 +395,144 @@ const TeamSelectionPage: React.FC = () => {
     switch (currentStep) {
       case 'team':
         return (
-          <div style={contentWrapper}>
-            <h2 style={teamTitle}>Pick Your Squad</h2>
-            <div style={searchContainer}>
-              <input
-                ref={inputRef}
-                type="text"
-                style={{
-                  ...searchInput,
-                  borderColor: selectedTeam ? 'var(--color-primary)' : 'black',
-                  boxShadow: selectedTeam ? '0 0 0 3px rgba(94, 43, 255, 0.1)' : 'none',
-                  fontWeight: '300',
-                  ...(document.activeElement === inputRef?.current ? {
-                    borderColor: 'var(--color-primary)',
-                    boxShadow: '0 0 0 3px rgba(94,43,255,0.1)'
-                  } : {})
-                }}
-                placeholder="start typing your squad name"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Tab' && suggestedText) {
-                    e.preventDefault();
-                    const match = suggestions.find(s => s.name === suggestedText);
-                    if (match) {
-                      setSearch(match.name);
-                      setSelectedTeam(match);
+          <>
+            <div style={containerHeader}>
+              <h2 style={pageTitle}>Pick Your Squad</h2>
+            </div>
+            <div style={containerContent}>
+              <div style={searchContainer}>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  style={{
+                    ...searchInput,
+                    borderColor: selectedTeam ? 'var(--color-primary)' : 'black',
+                    boxShadow: selectedTeam ? '0 0 0 3px rgba(94, 43, 255, 0.1)' : 'none',
+                    fontWeight: '300',
+                    ...(document.activeElement === inputRef?.current ? {
+                      borderColor: 'var(--color-primary)',
+                      boxShadow: '0 0 0 3px rgba(94,43,255,0.1)'
+                    } : {})
+                  }}
+                  placeholder="start typing your squad name"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Tab' && suggestedText) {
+                      e.preventDefault();
+                      const match = suggestions.find(s => s.name === suggestedText);
+                      if (match) {
+                        setSearch(match.name);
+                        setSelectedTeam(match);
+                      }
                     }
+                    if (e.key === 'Enter' && selectedTeam) {
+                      e.preventDefault();
+                      handleTeamSelect();
+                    }
+                  }}
+                />
+                {suggestedText && search && (
+                  <div style={suggestionText}>
+                    <span>{search}</span>
+                    <span style={suggestionSpan}>
+                      {suggestedText.substring(search.length)}
+                    </span>
+                  </div>
+                )}
+                <button
+                  onClick={handleTeamSelect}
+                  disabled={!selectedTeam}
+                  style={selectedTeam ? (arrowBtnHover ? { ...arrowButton, background: 'var(--color-primary)' } : arrowButton) : arrowButtonDisabled}
+                  onMouseEnter={() => setArrowBtnHover(true)}
+                  onMouseLeave={() => setArrowBtnHover(false)}
+                >
+                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+              <div style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', textAlign: 'right', width: '100%', minHeight: '1.25rem' }}>
+                {(() => {
+                  if (loading) {
+                    return 'searching...';
                   }
-                  if (e.key === 'Enter' && selectedTeam) {
-                    e.preventDefault();
-                    handleTeamSelect();
+                  if (selectedTeam) {
+                    return 'hit enter to continue';
                   }
-                }}
-              />
-              {suggestedText && search && (
-                <div style={suggestionText}>
-                  <span>{search}</span>
-                  <span style={suggestionSpan}>
-                    {suggestedText.substring(search.length)}
-                  </span>
-                </div>
-              )}
-              <button
-                onClick={handleTeamSelect}
-                disabled={!selectedTeam}
-                style={selectedTeam ? (arrowBtnHover ? { ...arrowButton, background: 'var(--color-primary)' } : arrowButton) : arrowButtonDisabled}
-                onMouseEnter={() => setArrowBtnHover(true)}
-                onMouseLeave={() => setArrowBtnHover(false)}
-              >
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+                  if (search.trim().length > 2 && suggestions.length === 0) {
+                    return "couldn't find your squad";
+                  }
+                  if (suggestedText) {
+                    return 'hit tab to autofill';
+                  }
+                  return '';
+                })()}
+              </div>
             </div>
-            <div style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', textAlign: 'right', width: '100%', minHeight: '1.25rem' }}>
-              {(() => {
-                if (loading) {
-                  return 'searching...';
-                }
-                if (selectedTeam) {
-                  return 'hit enter to continue';
-                }
-                if (search.trim().length > 2 && suggestions.length === 0) {
-                  return "couldn't find your squad";
-                }
-                if (suggestedText) {
-                  return 'hit tab to autofill';
-                }
-                return '';
-              })()}
-            </div>
-          </div>
+          </>
         );
         
       case 'category':
         return (
-          <div style={contentWrapper}>
-            {currentStep !== 'team' && (
+          <>
+            <div style={containerHeader}>
+              {currentStep !== 'team' && (
+                <button
+                  style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
+                  onClick={handleBack}
+                  onMouseEnter={() => setBackBtnHover(true)}
+                  onMouseLeave={() => setBackBtnHover(false)}
+                >
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back
+                </button>
+              )}
+              <h2 style={pageTitle}>Select a Category</h2>
+              {selectedTeam && (
+                <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1rem', textAlign: 'center' }}>
+                  Team: {selectedTeam.name}
+                </div>
+              )}
+            </div>
+            
+            <div style={containerContent}>
+              {loading ? (
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                  Loading categories...
+                </div>
+              ) : categories.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                  No categories found for this team.
+                </div>
+              ) : (
+                <div>
+                  {categories.map(category => (
+                    <div
+                      key={category.id}
+                      style={categoryHover === category.id ? { ...categoryCard, ...categoryCardHover } : categoryCard}
+                      onClick={() => handleCategorySelect(category)}
+                      onMouseEnter={() => setCategoryHover(category.id)}
+                      onMouseLeave={() => setCategoryHover(null)}
+                    >
+                      <div style={categoryName}>{category.name}</div>
+                      <div style={categoryDescription}>
+                        {category.rubric?.length || 0} story point ranges defined
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        );
+        
+      case 'questions':
+        return (
+          <>
+            <div style={containerHeader}>
               <button
                 style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
                 onClick={handleBack}
@@ -479,169 +544,126 @@ const TeamSelectionPage: React.FC = () => {
                 </svg>
                 Back
               </button>
-            )}
+              
+              <h2 style={pageTitle}>Answer Questions</h2>
+              {selectedTeam && selectedCategory && (
+                <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1rem', textAlign: 'center' }}>
+                  Team: {selectedTeam.name} | Category: {selectedCategory.name}
+                </div>
+              )}
+            </div>
             
-            <h2 style={teamTitle}>Select a Category</h2>
-            {selectedTeam && (
-              <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Team: {selectedTeam.name}
-              </div>
-            )}
-            
-            {loading ? (
-              <div style={{ textAlign: 'center', padding: '2rem' }}>
-                Loading categories...
-              </div>
-            ) : categories.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem' }}>
-                No categories found for this team.
-              </div>
-            ) : (
-              <div>
-                {categories.map(category => (
-                  <div
-                    key={category.id}
-                    style={categoryHover === category.id ? { ...categoryCard, ...categoryCardHover } : categoryCard}
-                    onClick={() => handleCategorySelect(category)}
-                    onMouseEnter={() => setCategoryHover(category.id)}
-                    onMouseLeave={() => setCategoryHover(null)}
-                  >
-                    <div style={categoryName}>{category.name}</div>
-                    <div style={categoryDescription}>
-                      {category.rubric?.length || 0} story point ranges defined
+            <div style={containerContent}>
+              {loading ? (
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                  Loading questions...
+                </div>
+              ) : questions.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                  No questions found for this category.
+                </div>
+              ) : (
+                <div>
+                  {questions.map((question, index) => (
+                    <div key={question.id} style={questionContainer}>
+                      <div style={questionText}>{index + 1}. {question.text}</div>
+                      {question.options.map(option => (
+                        <label
+                          key={option.id}
+                          style={{
+                            ...optionContainer,
+                            ...(answers[question.id] === option.points ? { backgroundColor: '#f0f9ff', borderColor: '#3b82f6' } : {})
+                          }}
+                        >
+                          <input
+                            type="radio"
+                            name={question.id}
+                            checked={answers[question.id] === option.points}
+                            onChange={() => handleAnswerSelect(question.id, option.points)}
+                            style={{ marginRight: '0.5rem' }}
+                          />
+                          <span style={optionLabel}>{option.label}</span>
+                          <span style={optionPoints}>{option.points} points</span>
+                        </label>
+                      ))}
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-        
-      case 'questions':
-        return (
-          <div style={contentWrapper}>
-            <button
-              style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
-              onClick={handleBack}
-              onMouseEnter={() => setBackBtnHover(true)}
-              onMouseLeave={() => setBackBtnHover(false)}
-            >
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back
-            </button>
-            
-            <h2 style={teamTitle}>Answer Questions</h2>
-            {selectedTeam && selectedCategory && (
-              <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1.5rem', textAlign: 'center' }}>
-                Team: {selectedTeam.name} | Category: {selectedCategory.name}
-              </div>
-            )}
-            
-            {loading ? (
-              <div style={{ textAlign: 'center', padding: '2rem' }}>
-                Loading questions...
-              </div>
-            ) : questions.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem' }}>
-                No questions found for this category.
-              </div>
-            ) : (
-              <div>
-                {questions.map((question, index) => (
-                  <div key={question.id} style={questionContainer}>
-                    <div style={questionText}>{index + 1}. {question.text}</div>
-                    {question.options.map(option => (
-                      <label
-                        key={option.id}
-                        style={{
-                          ...optionContainer,
-                          ...(answers[question.id] === option.points ? { backgroundColor: '#f0f9ff', borderColor: '#3b82f6' } : {})
-                        }}
-                      >
-                        <input
-                          type="radio"
-                          name={question.id}
-                          checked={answers[question.id] === option.points}
-                          onChange={() => handleAnswerSelect(question.id, option.points)}
-                          style={{ marginRight: '0.5rem' }}
-                        />
-                        <span style={optionLabel}>{option.label}</span>
-                        <span style={optionPoints}>{option.points} points</span>
-                      </label>
-                    ))}
-                  </div>
-                ))}
-                
-                <button
-                  onClick={handleSubmitAnswers}
-                  disabled={!allQuestionsAnswered}
-                  style={
-                    !allQuestionsAnswered
-                      ? submitButtonDisabled
-                      : submitBtnHover
-                      ? { ...submitButton, ...submitButtonHover }
-                      : submitButton
-                  }
-                  onMouseEnter={() => setSubmitBtnHover(true)}
-                  onMouseLeave={() => setSubmitBtnHover(false)}
-                >
-                  Submit Answers
-                </button>
-              </div>
-            )}
-          </div>
+                  ))}
+                  
+                  <button
+                    onClick={handleSubmitAnswers}
+                    disabled={!allQuestionsAnswered}
+                    style={
+                      !allQuestionsAnswered
+                        ? submitButtonDisabled
+                        : submitBtnHover
+                        ? { ...submitButton, ...submitButtonHover }
+                        : submitButton
+                    }
+                    onMouseEnter={() => setSubmitBtnHover(true)}
+                    onMouseLeave={() => setSubmitBtnHover(false)}
+                  >
+                    Submit Answers
+                  </button>
+                </div>
+              )}
+            </div>
+          </>
         );
         
       case 'results':
         return (
-          <div style={contentWrapper}>
-            <button
-              style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
-              onClick={handleBack}
-              onMouseEnter={() => setBackBtnHover(true)}
-              onMouseLeave={() => setBackBtnHover(false)}
-            >
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back to Questions
-            </button>
-            
-            <div style={resultContainer}>
-              <div style={resultTitle}>Estimation Results</div>
-              
-              <div style={resultScore}>{totalScore}</div>
-              <div style={resultLabel}>Total Points</div>
-              
-              <div style={resultStoryPoints}>
-                {storyPoints !== null ? storyPoints : '?'}
-              </div>
-              <div style={resultLabel}>Story Points</div>
-              
+          <>
+            <div style={containerHeader}>
               <button
-                onClick={handleReset}
-                style={submitBtnHover ? { ...submitButton, ...submitButtonHover } : submitButton}
-                onMouseEnter={() => setSubmitBtnHover(true)}
-                onMouseLeave={() => setSubmitBtnHover(false)}
+                style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
+                onClick={handleBack}
+                onMouseEnter={() => setBackBtnHover(true)}
+                onMouseLeave={() => setBackBtnHover(false)}
               >
-                Start New Estimation
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Questions
               </button>
+              
+              <h2 style={pageTitle}>Estimation Results</h2>
             </div>
-          </div>
+            
+            <div style={containerContent}>
+              <div style={resultContainer}>
+                <div style={resultScore}>{totalScore}</div>
+                <div style={resultLabel}>Total Points</div>
+                
+                <div style={resultStoryPoints}>
+                  {storyPoints !== null ? storyPoints : '?'}
+                </div>
+                <div style={resultLabel}>Story Points</div>
+                
+                <button
+                  onClick={handleReset}
+                  style={submitBtnHover ? { ...submitButton, ...submitButtonHover } : submitButton}
+                  onMouseEnter={() => setSubmitBtnHover(true)}
+                  onMouseLeave={() => setSubmitBtnHover(false)}
+                >
+                  Start New Estimation
+                </button>
+              </div>
+            </div>
+          </>
         );
     }
   };
 
   return (
-    <div style={pageContainer}>
-      {renderStepContent()}
-      {error && (
-        <div style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}>
-          {error}
-        </div>
-      )}
+    <div style={pageWrapper}>
+      <div style={boxedContainer}>
+        {renderStepContent()}
+        {error && (
+          <div style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}>
+            {error}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
