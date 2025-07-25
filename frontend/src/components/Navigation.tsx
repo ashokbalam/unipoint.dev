@@ -31,10 +31,8 @@ const Navigation: React.FC<NavigationProps> = ({
   // Navigation items configuration
   const navItems = [
     { path: '/', label: 'Estimate', id: 'home', adminOnly: false },
-    { path: '/onboard', label: 'Teams', id: 'teams', adminOnly: true },
-    { path: '/categories', label: 'Categories', id: 'category', adminOnly: true },
-    { path: '/questions', label: 'Questions', id: 'questions', adminOnly: true },
-    { path: '/bulk-upload', label: 'Upload', id: 'upload', adminOnly: true },
+    // Single consolidated admin link
+    { path: '/manage', label: 'Manage', id: 'manage', adminOnly: true },
   ];
 
   return (

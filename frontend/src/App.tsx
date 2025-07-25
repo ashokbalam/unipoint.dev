@@ -6,6 +6,7 @@ import Questions from './pages/Questions';
 import AnswerQuestionnaire from './pages/AnswerQuestionnaire';
 import TeamSelectionPage from './pages/TeamSelectionPage';
 import BulkUploadPage from './pages/BulkUploadPage';
+import ManagePage from './pages/ManagePage';
 import Footer from './components/Footer';
 import Navigation from './components/Navigation';
 import {
@@ -63,6 +64,8 @@ function App() {
                 path="/bulk-upload"
                 element={<BulkUploadPage />}
               />
+              {/* Consolidated admin dashboard */}
+              <Route path="/manage" element={<ManagePage />} />
               <Route path="/questionnaire/:teamId" element={<AnswerQuestionnaire />} />
               <Route path="/" element={<TeamSelectionPage />} />
               <Route path="*" element={<TeamSelectionPage />} />
