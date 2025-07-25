@@ -522,8 +522,47 @@ const TeamSelectionPage: React.FC = () => {
             
             <div style={containerContent}>
               {loading ? (
-                <div style={{ textAlign: 'center', padding: '2rem' }}>
-                  Loading categories...
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '2rem',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {/* Secondary-coloured spinning circle */}
+                  <svg
+                    width="40"
+                    height="40"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                      color: 'var(--color-secondary)',
+                      animation: 'spin 1s linear infinite',
+                    }}
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeDasharray="62.83"
+                      strokeDashoffset="15.71"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  {/* Keyframes injected locally to scope animation */}
+                  <style>
+                    {`
+                      @keyframes spin {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(360deg); }
+                      }
+                    `}
+                  </style>
                 </div>
               ) : categories.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
