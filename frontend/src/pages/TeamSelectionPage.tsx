@@ -664,7 +664,11 @@ const TeamSelectionPage: React.FC = () => {
                             name={question.id}
                             checked={answers[question.id] === option.points}
                             onChange={() => handleAnswerSelect(question.id, option.points)}
-                            style={{ marginRight: '0.5rem' }}
+                            style={{
+                              marginRight: '0.5rem',
+                              /* Use primary brand colour for checked state (modern browsers) */
+                              accentColor: 'var(--color-primary)',
+                            }}
                           />
                           <span style={optionLabel}>{option.label}</span>
                           <span style={optionPoints}>{option.points} points</span>
