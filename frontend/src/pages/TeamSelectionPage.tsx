@@ -366,6 +366,35 @@ const TeamSelectionPage: React.FC = () => {
     fontFamily: 'var(--font-heading)',
   };
   
+  // Three-column header layout for true centering
+  const threeColumnHeader = {
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: '1rem',
+  };
+  
+  const headerColumn = {
+    flex: '1 0 33.333%', // Each column takes exactly 1/3 of the space
+    display: 'flex',
+    alignItems: 'center',
+  };
+  
+  const leftColumn = {
+    ...headerColumn,
+    justifyContent: 'flex-start', // Align back button to the left
+  };
+  
+  const centerColumn = {
+    ...headerColumn,
+    justifyContent: 'center', // Center the team name
+  };
+  
+  const rightColumn = {
+    ...headerColumn,
+    // Empty column for balance
+  };
+  
   // Render different content based on current step
   const renderStepContent = () => {
     switch (currentStep) {
@@ -454,36 +483,41 @@ const TeamSelectionPage: React.FC = () => {
       case 'category':
         return (
           <>
-            <div style={containerHeader}>
-              <button
-                style={backBtnHover ? { ...backButtonBase, ...backButtonHover } : backButtonBase}
-                onClick={handleBack}
-                onMouseEnter={() => setBackBtnHover(true)}
-                onMouseLeave={() => setBackBtnHover(false)}
-              >
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back
-              </button>
-
-              {/* ---------- TOP ROW : Back button & Team name ---------- */}
-              {selectedTeam && (
-                <div
-                  style={{
-                    flex: 1,
-                    textAlign: 'center',
+            {/* Three-column header layout for true centering */}
+            <div style={threeColumnHeader}>
+              {/* Left column: Back button */}
+              <div style={leftColumn}>
+                <button
+                  style={backBtnHover ? { ...backButtonBase, ...backButtonHover } : backButtonBase}
+                  onClick={handleBack}
+                  onMouseEnter={() => setBackBtnHover(true)}
+                  onMouseLeave={() => setBackBtnHover(false)}
+                >
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back
+                </button>
+              </div>
+              
+              {/* Center column: Team name */}
+              <div style={centerColumn}>
+                {selectedTeam && (
+                  <div style={{
                     fontSize: '1rem',
                     color: '#6b7280',
                     fontWeight: 500,
-                  }}
-                >
-                  Team: {selectedTeam.name}
-                </div>
-              )}
+                  }}>
+                    Team: {selectedTeam.name}
+                  </div>
+                )}
+              </div>
+              
+              {/* Right column: Empty space for balance */}
+              <div style={rightColumn}></div>
             </div>
             
-            {/* ---------- SECOND ROW : Title ---------- */}
+            {/* Title */}
             <h2
               style={{
                 ...h2,
