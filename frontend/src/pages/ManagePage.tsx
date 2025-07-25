@@ -20,51 +20,48 @@ const ManagePage: React.FC = () => {
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState<string | null>(null);
   
-  // Card data with icons, titles, descriptions, and routes
+  // Card data with titles, descriptions, and routes (icons removed)
   const managementCards = [
     {
       id: 'teams',
-      icon: '👥',
       title: 'Teams',
       description: 'Create and manage teams for your organization. Add new teams and configure team settings.',
       route: '/onboard',
     },
     {
       id: 'categories',
-      icon: '📋',
       title: 'Categories',
       description: 'Organize questions into categories. Set up rubrics for scoring and estimation.',
       route: '/categories',
     },
     {
       id: 'questions',
-      icon: '❓',
       title: 'Questions',
       description: 'Create and manage assessment questions. Configure options and point values.',
       route: '/questions',
     },
     {
       id: 'upload',
-      icon: '📤',
       title: 'Bulk Upload',
       description: 'Import multiple categories and questions at once using CSV or JSON files.',
       route: '/bulk-upload',
     },
   ];
   
-  // Card container grid layout
+  // Card container using flexbox for even distribution
   const cardGrid = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-    gap: '1.5rem',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     width: '100%',
+    gap: '1.5rem',
   };
   
-  // Enhanced card styles
+  // Enhanced card styles with fixed width for even distribution
   const cardStyle = {
     ...cardBase,
     padding: '1.5rem',
-    height: '100%',
+    width: 'calc(50% - 1rem)', // Two cards per row with spacing
     display: 'flex',
     flexDirection: 'column' as const,
     transition: 'all 0.2s ease',
@@ -74,11 +71,6 @@ const ManagePage: React.FC = () => {
     ...cardHover,
     transform: 'translateY(-4px)',
     boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-  };
-  
-  const cardIcon = {
-    fontSize: '2.5rem',
-    marginBottom: '1rem',
   };
   
   const cardTitle = {
@@ -92,7 +84,6 @@ const ManagePage: React.FC = () => {
   const cardDescription = {
     ...bodyText,
     color: 'var(--color-text-light, #4b5563)',
-    // Description now sits directly below title; no need for extra push
   };
   
   // Handle card click to navigate
@@ -184,9 +175,6 @@ const ManagePage: React.FC = () => {
                 }
               }}
             >
-              <div style={cardIcon} aria-hidden="true">
-                {card.icon}
-              </div>
               <div style={cardTitle}>{card.title}</div>
               <div style={cardDescription}>{card.description}</div>
             </div>
