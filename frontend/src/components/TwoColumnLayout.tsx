@@ -27,12 +27,20 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   const containerStyle: React.CSSProperties = {
     display: 'flex',
     width: '100%',
-    /* Occupy exactly full viewport height */
-    height: '100vh',
+    /* Height is dictated by content (80 vh box + padding) */
     background: 'var(--color-background)',
-    // Stack content from the top of the viewport
+    // Stack content from the top of the two-column block
     alignItems: 'flex-start',
     padding: '2rem',
+  };
+
+  // Outer wrapper to vertically centre the 2-column block on screen
+  const outerCenterStyle: React.CSSProperties = {
+    display: 'flex',
+    width: '100%',
+    height: '100vh',
+    justifyContent: 'center',
+    alignItems: 'center',
   };
 
   // Title column style
@@ -106,12 +114,14 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
 
   return (
     <div style={pageWrapper}>
-      <div style={responsiveContainerStyle}>
-        <div style={responsiveTitleColumnStyle}>
-          {typeof title === 'string' ? <h1 style={titleStyle}>{title}</h1> : title}
-        </div>
-        <div style={responsiveContentColumnStyle}>
-          {children}
+      <div style={outerCenterStyle}>
+        <div style={responsiveContainerStyle}>
+          <div style={responsiveTitleColumnStyle}>
+            {typeof title === 'string' ? <h1 style={titleStyle}>{title}</h1> : title}
+          </div>
+          <div style={responsiveContentColumnStyle}>
+            {children}
+          </div>
         </div>
       </div>
     </div>
