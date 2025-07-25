@@ -3,13 +3,10 @@
   --font-body: 'Inter', sans-serif;
   
   /* Color Palette */
-  --color-background: #E7E7E7; /* Very light gray */
-  --color-primary: #485696;    /* Deep Indigo Blue */
-  --color-secondary: #F24C00;  /* Orange */
-  --color-text: #374151;       /* Gray 700 */
-  --color-text-light: #6B7280; /* Gray 500 */
-  --color-border: #E5E7EB;     /* Gray 200 */
-  --color-error: #EF4444;      /* Red 500 */
+  --color-background: #FAFAFA; /* Very light gray */
+  --color-primary: #4F48EC;    /* Deep Indigo Blue */
+  --color-secondary: #FF7900;  /* Orange */
+  --color-text: #100E34;       /* Gray 700 */
 }
 
 a {
