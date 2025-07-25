@@ -220,7 +220,7 @@ const TeamSelectionPage: React.FC = () => {
     setCurrentStep('results');
   };
   
-  // Go back to previous step
+  
   const handleBack = () => {
     if (currentStep === 'category') {
       setCurrentStep('team');
