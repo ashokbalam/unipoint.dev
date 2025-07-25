@@ -8,11 +8,17 @@ import {
   cardHover,
 } from '../App.styles';
 
+const PASSCODE = 'admin123';
+
 const ManagePage: React.FC = () => {
   const navigate = useNavigate();
   
   // Track which card is being hovered
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  // God-mode auth state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passcode, setPasscode] = useState('');
+  const [error, setError] = useState<string | null>(null);
   
   // Card data with icons, titles, descriptions, and routes
   const managementCards = [
@@ -93,11 +99,69 @@ const ManagePage: React.FC = () => {
   const handleCardClick = (route: string) => {
     navigate(route);
   };
+  /* ------------------------------------------------------------------
+   * Simple auth gate – ask for pass-code before showing cards
+   * ----------------------------------------------------------------- */
+  const handleAuthSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passcode === PASSCODE) {
+      setIsAuthenticated(true);
+      setError(null);
+    } else {
+      setError('Incorrect passcode');
+    }
+  };
   
   return (
     <TwoColumnLayout title="Manage">
       
       <div style={containerContent}>
+        {/* If not authenticated show passcode form */}
+        {!isAuthenticated ? (
+          <form
+            onSubmit={handleAuthSubmit}
+            style={{
+              maxWidth: '400px',
+              margin: '0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}
+          >
+            <label htmlFor="passcode" style={{ fontWeight: 600 }}>
+              Enter Admin Passcode
+            </label>
+            <input
+              id="passcode"
+              type="password"
+              value={passcode}
+              onChange={(e) => setPasscode(e.target.value)}
+              style={{
+                padding: '0.75rem 1rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '0.5rem',
+                fontSize: '1rem',
+              }}
+            />
+            {error && (
+              <div style={{ color: '#ef4444', fontSize: '0.875rem' }}>{error}</div>
+            )}
+            <button
+              type="submit"
+              style={{
+                backgroundColor: 'var(--color-primary)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '0.5rem',
+                padding: '0.75rem',
+                cursor: 'pointer',
+                fontWeight: 600,
+              }}
+            >
+              Continue
+            </button>
+          </form>
+        ) : (
         <div style={cardGrid}>
           {managementCards.map((card) => (
             <div
@@ -128,6 +192,7 @@ const ManagePage: React.FC = () => {
             </div>
           ))}
         </div>
+        )}
       </div>
     </TwoColumnLayout>
   );

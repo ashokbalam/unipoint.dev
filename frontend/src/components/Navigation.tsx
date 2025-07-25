@@ -8,7 +8,6 @@ import {
   navigationLink,
   navigationLinkHover,
   navigationLinkActive,
-  navigationLinkDisabled,
 } from '../App.styles';
 
 /* ------------------------------------------------------------------ */
@@ -67,24 +66,11 @@ const Navigation: React.FC<NavigationProps> = ({
                   ...(hoveredLink === item.id ? navigationLinkHover : {}),
                 };
 
-                // if link requires God Mode and it's not enabled, add strikethrough
-                if (item.adminOnly && !isGodModeEnabled) {
-                  return {
-                    ...baseStyle,
-                    textDecoration: 'line-through',
-                  };
-                }
-
                 return baseStyle;
               }}
               onMouseEnter={() => setHoveredLink(item.id)}
               onMouseLeave={() => setHoveredLink(null)}
-              onClick={(e) => {
-                if (item.adminOnly && !isGodModeEnabled) {
-                  e.preventDefault();
-                  toggleGodMode();
-                }
-              }}
+              /* Allow navigation; ManagePage will request pass-code if needed */
             >
               {({ isActive }) => (
                 <>
