@@ -86,26 +86,7 @@ const ManagePage: React.FC = () => {
   const cardDescription = {
     ...bodyText,
     color: 'var(--color-text-light, #4b5563)',
-    marginBottom: '1rem',
-    flex: 1,
-  };
-  
-  const cardButton = {
-    backgroundColor: 'var(--color-primary)',
-    color: 'white',
-    border: 'none',
-    borderRadius: '0.375rem',
-    padding: '0.5rem 1rem',
-    fontSize: '0.875rem',
-    fontWeight: 500,
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-    marginTop: 'auto',
-    textAlign: 'center' as const,
-  };
-  
-  const cardButtonHover = {
-    backgroundColor: '#4338ca', // Darker shade of primary color
+    // Description now sits directly below title; no need for extra push
   };
   
   // Handle card click to navigate
@@ -144,15 +125,6 @@ const ManagePage: React.FC = () => {
               </div>
               <div style={cardTitle}>{card.title}</div>
               <div style={cardDescription}>{card.description}</div>
-              <div
-                style={
-                  hoveredCard === card.id
-                    ? { ...cardButton, ...cardButtonHover }
-                    : cardButton
-                }
-              >
-                Manage {card.title}
-              </div>
             </div>
           ))}
         </div>
