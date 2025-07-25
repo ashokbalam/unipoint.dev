@@ -23,6 +23,7 @@ import {
   containerHeader,
   containerContent,
 } from '../App.styles';
+import TwoColumnLayout from '../components/TwoColumnLayout';
 
 const OnboardTenant: React.FC = () => {
   const [teamName, setTeamName] = useState('');
@@ -62,8 +63,7 @@ const OnboardTenant: React.FC = () => {
   };
 
   return (
-    <div style={pageWrapper}>
-      <div style={boxedContainer}>
+    <TwoColumnLayout title="Create New Team">
         {/* Header */}
         <section style={containerHeader}>
         <h1 style={pageTitle}>Create New Team</h1>
@@ -129,8 +129,7 @@ const OnboardTenant: React.FC = () => {
           </form>
         </div>
         </div>
-      </div>
-    </div>
+    </TwoColumnLayout>
   );
 };
 
