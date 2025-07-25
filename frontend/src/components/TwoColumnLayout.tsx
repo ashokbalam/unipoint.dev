@@ -27,11 +27,10 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   const containerStyle: React.CSSProperties = {
     display: 'flex',
     width: '100%',
-    height: '100vh',              // occupy full viewport height
+    minHeight: '100vh',
     background: 'var(--color-background)',
     // Vertically centre the two-column block
     alignItems: 'center',
-    overflow: 'hidden',           // prevent page-level scroll
     padding: '2rem',
   };
 
@@ -58,9 +57,8 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   // Content column style
   const contentColumnStyle: React.CSSProperties = {
     width: contentWidth,
-    // Reduce height by the vertical padding (2 rem top + 2 rem bottom = 4 rem)
-    // so the box fits perfectly without causing page-level scroll.
-    height: 'calc(100vh - 4rem)',
+    // Unified height requirement: 80 % of viewport
+    height: '80vh',
     backgroundColor: '#ffffff',
     borderRadius: '1.5rem',
     border: '1px solid #e0e7ff',
@@ -68,7 +66,6 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     padding: '2rem',
     display: 'flex',
     flexDirection: 'column',
-    overflowY: 'auto',            // content scrolls internally
     ...customContentStyles,
   };
 
