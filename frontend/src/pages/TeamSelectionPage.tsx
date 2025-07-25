@@ -263,7 +263,7 @@ const TeamSelectionPage: React.FC = () => {
   const enhancedTitle = {
     ...h2,
     marginTop: '1.5rem',
-    marginBottom: '3rem',
+    marginBottom: '1.5rem',
     textAlign: 'center' as const,
   };
   
@@ -273,10 +273,6 @@ const TeamSelectionPage: React.FC = () => {
     color: 'var(--color-text)',
     marginBottom: '0.25rem',
   };
-  
-  const categoryDescription = {
-    fontSize: '0.875rem',
-    color: '#6b7280',
   };
   
   const questionContainer = {
@@ -482,9 +478,6 @@ const TeamSelectionPage: React.FC = () => {
                       onMouseLeave={() => setCategoryHover(null)}
                     >
                       <div style={categoryName}>{category.name}</div>
-                      <div style={categoryDescription}>
-                        {category.rubric?.length || 0} story point ranges defined
-                      </div>
                     </div>
                   ))}
                 </div>
