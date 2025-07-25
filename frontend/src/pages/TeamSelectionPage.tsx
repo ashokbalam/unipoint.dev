@@ -276,7 +276,8 @@ const TeamSelectionPage: React.FC = () => {
    * Category Card (consistent border + subtle hover)
    * ------------------------------------------------- */
   const categoryCardBase = {
-    border: '1px solid #e5e7eb',               // always-visible border
+    // Darker grey for better initial visibility while still subtle
+    border: '1px solid #d1d5db',               // always-visible border
     borderRadius: '0.75rem',
     backgroundColor: '#ffffff',
     padding: '1rem',
@@ -496,7 +497,7 @@ const TeamSelectionPage: React.FC = () => {
                   <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                  Back
+                  Change Squad
                 </button>
               </div>
               
@@ -508,7 +509,7 @@ const TeamSelectionPage: React.FC = () => {
                     color: '#6b7280',
                     fontWeight: 500,
                   }}>
-                    Team: {selectedTeam.name}
+                    Squad: {selectedTeam.name}
                   </div>
                 )}
               </div>
