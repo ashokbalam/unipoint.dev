@@ -10,8 +10,6 @@ interface TwoColumnLayoutProps {
   titleAlign?: 'top' | 'center' | 'bottom';
   customTitleStyles?: React.CSSProperties;
   customContentStyles?: React.CSSProperties;
-  /** Compact mode removes min-height to avoid large empty whitespace */
-  compact?: boolean;
 }
 
 const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
@@ -24,7 +22,6 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   titleAlign = 'top',
   customTitleStyles = {},
   customContentStyles = {},
-  compact = false,
 }) => {
   // Base container style
   const containerStyle: React.CSSProperties = {
@@ -75,9 +72,8 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   // Content column style
   const contentColumnStyle: React.CSSProperties = {
     width: contentWidth,
-    // Use min-height so the box grows with content but doesn't leave huge gaps.
-    // Default 60 vh gives a pleasant proportion on larger screens.
-    minHeight: '60vh',
+    // Unified height requirement: 80 % of viewport
+    height: '80vh',
     backgroundColor: '#ffffff',
     borderRadius: '1.5rem',
     border: '1px solid #e0e7ff',
@@ -87,14 +83,6 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     flexDirection: 'column',
     ...customContentStyles,
   };
-
-  // Apply compact overrides (smaller forms, no large white space)
-  if (compact) {
-    Object.assign(contentColumnStyle, {
-      minHeight: 'auto',
-      padding: '1.5rem',
-    });
-  }
 
   // Responsive styles for smaller screens
   const mediaQuery = window.matchMedia('(max-width: 768px)');
@@ -120,7 +108,7 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     ? {
         ...contentColumnStyle,
         width: '100%',
-        minHeight: 'auto', // let content dictate height on small screens
+        height: 'auto', // let content dictate height on small screens
       }
     : contentColumnStyle;
 
