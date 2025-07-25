@@ -1,28 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BulkUploadSimple from '../components/BulkUploadSimple';
+import TwoColumnLayout from '../components/TwoColumnLayout';
 import {
-  pageWrapper,
-  boxedContainer,
   containerHeader,
   containerContent,
-  h2,
   primaryButton,
 } from '../App.styles';
 
-// Styles specific to this page
+// Styles specific to this page (only what’s unique to tenant-selector and messages)
 const styles = {
-  pageContainer: {
-    ...pageWrapper,
-    padding: '2rem',
-  },
-  header: {
-    ...h2,
-    marginBottom: '1.5rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
   tenantSelector: {
     marginBottom: '2rem',
     padding: '1.5rem',
@@ -185,48 +172,38 @@ const BulkUploadPage: React.FC = () => {
   // Render loading state
   if (loading) {
     return (
-      <div style={styles.pageContainer}>
-        <div style={styles.loadingContainer}>
-          <div style={styles.loadingSpinner}></div>
+      <TwoColumnLayout title="Bulk Upload">
+        <div style={containerContent}>
+          <div style={{ textAlign: 'center', padding: '2rem' }}>Loading...</div>
         </div>
-      </div>
+      </TwoColumnLayout>
     );
   }
 
   // Render error state
   if (error) {
     return (
-      <div style={styles.pageContainer}>
-        <div style={styles.header}>
-          <h1>Bulk Upload</h1>
+      <TwoColumnLayout title="Bulk Upload">
+        <div style={containerContent}>
+          <div style={{ textAlign: 'center', padding: '3rem' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
+            <h3 style={{ marginBottom: '0.5rem' }}>Error</h3>
+            <p style={{ marginBottom: '1.5rem' }}>{error}</p>
+            <button style={primaryButton} onClick={() => window.location.reload()}>
+              Try Again
+            </button>
+          </div>
         </div>
-        <div style={styles.noAccessMessage}>
-          <div style={styles.noAccessIcon}>⚠️</div>
-          <div style={styles.noAccessTitle}>Error</div>
-          <div style={styles.noAccessText}>{error}</div>
-          <button 
-            style={{...primaryButton}}
-            onClick={() => window.location.reload()}
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
+      </TwoColumnLayout>
     );
   }
 
   return (
-    <div style={styles.pageContainer}>
-      <div style={styles.header}>
-        <h1>Bulk Upload</h1>
+    <TwoColumnLayout title="Bulk Upload">
+      <div style={containerHeader}>
+        <h2>Upload Categories &amp; Questions</h2>
       </div>
-
-      <div style={{...boxedContainer, width: '90%', maxWidth: '1200px'}}>
-        <div style={containerHeader}>
-          <h2>Upload Categories & Questions</h2>
-        </div>
-        
-        <div style={containerContent}>
+      <div style={containerContent}>
           {/* Tenant Selector */}
           <div style={styles.tenantSelector}>
             <div style={styles.tenantSelectorTitle}>Select a Team</div>
@@ -258,9 +235,8 @@ const BulkUploadPage: React.FC = () => {
               </div>
             </div>
           )}
-        </div>
       </div>
-    </div>
+    </TwoColumnLayout>
   );
 };
 
