@@ -143,6 +143,8 @@ const TeamSelectionPage: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [backBtnHover, setBackBtnHover] = useState(false);
   const [submitBtnHover, setSubmitBtnHover] = useState(false);
+  // Track whether the search input currently has focus
+  const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
   
   // Team search and selection
   useEffect(() => {
@@ -470,6 +472,8 @@ const TeamSelectionPage: React.FC = () => {
                 }}
                 placeholder="start typing your squad name"
                 value={search}
+                onFocus={() => setIsInputFocused(true)}
+                onBlur={() => setIsInputFocused(false)}
                 onChange={e => setSearch(e.target.value)}
                 onKeyDown={e => {
                   if (e.key === 'Tab' && suggestedText) {
@@ -516,7 +520,7 @@ const TeamSelectionPage: React.FC = () => {
                 if (loading) {
                   return 'searching';
                 }
-                if (selectedTeam) {
+                if (selectedTeam && isInputFocused) {
                   return 'hit enter to continue';
                 }
                 if (search.trim().length > 2 && suggestions.length === 0) {
