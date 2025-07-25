@@ -535,24 +535,26 @@ const TeamSelectionPage: React.FC = () => {
                 </svg>
               </button>
             </div>
-            {/* Fixed height to prevent layout shift when helper text changes */}
-            <div style={{ ...smallText, marginTop: '0.5rem', textAlign: 'right', width: '100%', height: '1.25rem' }}>
-              {(() => {
-                if (loading) {
-                  return 'searching';
-                }
-                if (selectedTeam && isInputFocused) {
-                  return 'hit enter to continue';
-                }
-                if (search.trim().length > 2 && suggestions.length === 0) {
-                  return "couldn't find your squad";
-                }
-                if (suggestedText) {
-                  return 'hit tab to autofill';
-                }
-                return '';
-              })()}
-            </div>
+            {/* Conditionally render helper text only when there's content to show */}
+            {(() => {
+              let helperText = '';
+              if (loading) {
+                helperText = 'searching';
+              } else if (selectedTeam && isInputFocused) {
+                helperText = 'hit enter to continue';
+              } else if (search.trim().length > 2 && suggestions.length === 0) {
+                helperText = "couldn't find your squad";
+              } else if (suggestedText) {
+                helperText = 'hit tab to autofill';
+              }
+              
+              // Only render the div if there's actually text to display
+              return helperText ? (
+                <div style={{ ...smallText, marginTop: '0.5rem', textAlign: 'right', width: '100%' }}>
+                  {helperText}
+                </div>
+              ) : null;
+            })()}
           </div>
         );
         
