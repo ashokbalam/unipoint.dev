@@ -520,18 +520,6 @@ const TeamSelectionPage: React.FC = () => {
               <div style={rightColumn}></div>
             </div>
             
-            {/* Title */}
-            <h2
-              style={{
-                ...h2,
-                textAlign: 'center',
-                marginTop: '0.5rem', // spacing between team name row and title
-                marginBottom: '1rem',
-              }}
-            >
-              Select a Category
-            </h2>
-
             <div style={containerContent}>
               {loading ? (
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
@@ -600,18 +588,6 @@ const TeamSelectionPage: React.FC = () => {
               {/* Right column: Empty space for balance */}
               <div style={rightColumn}></div>
             </div>
-            
-            {/* Title */}
-            <h2
-              style={{
-                ...h2,
-                textAlign: 'center',
-                marginTop: '0.5rem', // spacing between team name row and title
-                marginBottom: '1rem',
-              }}
-            >
-              Answer Questions
-            </h2>
             
             <div style={containerContent}>
               {loading ? (

@@ -12,7 +12,6 @@ import {
 
 // Common container section styles
 import {
-  containerHeader,
   containerContent
 } from '../App.styles';
 
@@ -43,10 +42,6 @@ const AnswerQuestionnaire: React.FC = () => {
 
   return (
     <TwoColumnLayout title="Team Questionnaire">
-        <div style={containerHeader}>
-          <h2 style={title}>Team Questionnaire</h2>
-        </div>
-
         <div style={containerContent}>
           {submitted ? (
             <div style={thankYou}>Thank you for submitting your answers!</div>

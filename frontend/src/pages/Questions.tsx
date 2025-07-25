@@ -740,7 +740,6 @@ const Questions: React.FC = () => {
   return (
     <TwoColumnLayout title="Questions">
         <div style={containerHeader}>
-          <h1 style={sectionHeader}>Questions</h1>
           
           {selectedTeam && (
             <div style={selectedTeamContainer}>

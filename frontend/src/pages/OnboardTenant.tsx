@@ -19,8 +19,6 @@ import {
 } from './OnboardTenant.styles';
 import {
   pageWrapper,
-  boxedContainer,
-  containerHeader,
   containerContent,
 } from '../App.styles';
 import TwoColumnLayout from '../components/TwoColumnLayout';
@@ -64,15 +62,6 @@ const OnboardTenant: React.FC = () => {
 
   return (
     <TwoColumnLayout title="Create New Team">
-        {/* Header */}
-        <section style={containerHeader}>
-        <h1 style={pageTitle}>Create New Team</h1>
-        <p style={pageSubtitle}>
-          Add a new tenant (squad) to your workspace. Give it a memorable name so your team can easily
-          find it later.
-        </p>
-        </section>
-
         {/* Form Card */}
         <div style={containerContent}>
         <div style={formContainer}>

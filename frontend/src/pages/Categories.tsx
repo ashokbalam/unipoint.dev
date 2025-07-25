@@ -719,7 +719,6 @@ const Categories: React.FC = () => {
     <TwoColumnLayout title="Categories">
         {/* Header Section with Inline Team Selection */}
         <div style={containerHeader}>
-          <h1 style={heading}>Categories</h1>
           {/* Only show compact team info when a team is already selected */}
           {selectedTeam && (
             <div style={teamSelectionWrapper}>
