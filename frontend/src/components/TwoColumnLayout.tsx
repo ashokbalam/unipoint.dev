@@ -56,6 +56,8 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     fontFamily: 'var(--font-heading)',
     lineHeight: 1.1,
     letterSpacing: '0.015em',
+    // Right-align the title so it sits flush to the content box
+    textAlign: 'right',
     marginBottom: '1rem',
   };
 
