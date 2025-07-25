@@ -273,7 +273,6 @@ const TeamSelectionPage: React.FC = () => {
     color: 'var(--color-text)',
     marginBottom: '0.25rem',
   };
-  };
   
   const questionContainer = {
     marginBottom: '1.5rem',
