@@ -49,8 +49,10 @@ const Navigation: React.FC<NavigationProps> = ({
   const separatorStyle: React.CSSProperties = {
     width: '1px',
     height: '1.75rem', // roughly aligns with link height
-    backgroundColor: 'var(--color-border, #d1d5db)',
-    margin: '0.25rem 0.75rem',
+    /* Use secondary colour so separator is more visible */
+    backgroundColor: 'var(--color-secondary)',
+    /* Narrower top/bottom spacing for a slimmer look  */
+    margin: '0.125rem 0.75rem',
     alignSelf: 'center',
   };
 
