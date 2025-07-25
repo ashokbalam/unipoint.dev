@@ -716,7 +716,7 @@ const Categories: React.FC = () => {
   };
   
   return (
-    <TwoColumnLayout title="Categories">
+    <TwoColumnLayout title="Categories" compact>
         {/* Header Section with Inline Team Selection */}
         <div style={containerHeader}>
           {/* Only show compact team info when a team is already selected */}

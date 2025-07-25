@@ -738,7 +738,7 @@ const Questions: React.FC = () => {
   };
   
   return (
-    <TwoColumnLayout title="Questions">
+    <TwoColumnLayout title="Questions" compact>
         <div style={containerHeader}>
           
           {selectedTeam && (

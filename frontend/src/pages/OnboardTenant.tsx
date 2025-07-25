@@ -61,7 +61,7 @@ const OnboardTenant: React.FC = () => {
   };
 
   return (
-    <TwoColumnLayout title="Create New Team">
+    <TwoColumnLayout title="Create New Team" compact>
         {/* Form Card */}
         <div style={containerContent}>
         <div style={formContainer}>
