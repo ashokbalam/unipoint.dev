@@ -48,7 +48,8 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   // Title text style
   const titleStyle: React.CSSProperties = {
     // Match global h1 style (Bulk Upload title)
-    fontSize: '3.2em',
+    // Use a fixed unit for absolute consistency (3.2 * 16px = 51.2px ≈ 3.2rem)
+    fontSize: '3.2rem',
     fontWeight: 700,
     color: 'var(--color-text)',
     fontFamily: 'var(--font-heading)',
