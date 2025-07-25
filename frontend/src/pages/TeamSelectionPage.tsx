@@ -63,6 +63,54 @@ interface Question {
 // Type for the current step in the flow
 type Step = 'team' | 'category' | 'questions' | 'results';
 
+// Reusable loading spinner component
+const LoadingSpinner = () => (
+  <div
+    style={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+    {/* Secondary-coloured spinning circle */}
+    <svg
+      width="40"
+      height="40"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        color: 'var(--color-secondary)',
+        animation: 'spin 1s linear infinite',
+      }}
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeDasharray="62.83"
+        strokeDashoffset="15.71"
+        strokeLinecap="round"
+      />
+    </svg>
+    {/* Keyframes injected locally to scope animation */}
+    <style>
+      {`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}
+    </style>
+  </div>
+);
+
 const TeamSelectionPage: React.FC = () => {
   // Navigation
   const navigate = useNavigate();
@@ -522,47 +570,8 @@ const TeamSelectionPage: React.FC = () => {
             
             <div style={containerContent}>
               {loading ? (
-                <div
-                  style={{
-                    textAlign: 'center',
-                    padding: '2rem',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  {/* Secondary-coloured spinning circle */}
-                  <svg
-                    width="40"
-                    height="40"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    style={{
-                      color: 'var(--color-secondary)',
-                      animation: 'spin 1s linear infinite',
-                    }}
-                  >
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeDasharray="62.83"
-                      strokeDashoffset="15.71"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  {/* Keyframes injected locally to scope animation */}
-                  <style>
-                    {`
-                      @keyframes spin {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(360deg); }
-                      }
-                    `}
-                  </style>
+                <div style={{ position: 'relative', flex: 1 }}>
+                  <LoadingSpinner />
                 </div>
               ) : categories.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
@@ -630,8 +639,8 @@ const TeamSelectionPage: React.FC = () => {
             
             <div style={containerContent}>
               {loading ? (
-                <div style={{ textAlign: 'center', padding: '2rem' }}>
-                  Loading questions...
+                <div style={{ position: 'relative', flex: 1 }}>
+                  <LoadingSpinner />
                 </div>
               ) : questions.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
