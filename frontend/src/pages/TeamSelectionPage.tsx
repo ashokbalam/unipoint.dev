@@ -146,6 +146,27 @@ const TeamSelectionPage: React.FC = () => {
   // Track whether the search input currently has focus
   const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
   
+  /*
+   * ------------------------------------------------------------------
+   * Click-outside detection for the search input
+   * Ensures helper text disappears when user clicks anywhere else
+   * ------------------------------------------------------------------
+   */
+  useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      // If ref is set and the click target is outside the input element
+      if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
+        setIsInputFocused(false);
+      }
+    };
+
+    // Use mousedown so the blur happens immediately on click
+    document.addEventListener('mousedown', handleDocumentClick);
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentClick);
+    };
+  }, []);
+
   // Team search and selection
   useEffect(() => {
     // Clear selection if search is cleared
