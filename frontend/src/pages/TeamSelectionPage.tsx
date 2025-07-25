@@ -466,15 +466,35 @@ const TeamSelectionPage: React.FC = () => {
                 </svg>
                 Back
               </button>
-              
-              <h2 style={h2}>Select a Category</h2>
+
+              {/* ---------- TOP ROW : Back button & Team name ---------- */}
               {selectedTeam && (
-                <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1rem', textAlign: 'center' }}>
+                <div
+                  style={{
+                    flex: 1,
+                    textAlign: 'center',
+                    fontSize: '1rem',
+                    color: '#6b7280',
+                    fontWeight: 500,
+                  }}
+                >
                   Team: {selectedTeam.name}
                 </div>
               )}
             </div>
             
+            {/* ---------- SECOND ROW : Title ---------- */}
+            <h2
+              style={{
+                ...h2,
+                textAlign: 'center',
+                marginTop: '0.5rem', // spacing between team name row and title
+                marginBottom: '1rem',
+              }}
+            >
+              Select a Category
+            </h2>
+
             <div style={containerContent}>
               {loading ? (
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
