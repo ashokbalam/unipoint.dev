@@ -252,6 +252,21 @@ const TeamSelectionPage: React.FC = () => {
   };
   
   // Custom styles for components
+  const enhancedContentWrapper = {
+    ...contentWrapper,
+    padding: '2rem 3rem',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+  };
+  
+  const enhancedTitle = {
+    ...h2,
+    marginTop: '1.5rem',
+    marginBottom: '3rem',
+    textAlign: 'center' as const,
+  };
+  
   const categoryName = {
     fontSize: '1.125rem',
     fontWeight: 600,
@@ -343,8 +358,8 @@ const TeamSelectionPage: React.FC = () => {
     switch (currentStep) {
       case 'team':
         return (
-          <div style={contentWrapper}>
-            <h2 style={h2}>Pick Your Squad</h2>
+          <div style={enhancedContentWrapper}>
+            <h2 style={enhancedTitle}>Pick Your Squad</h2>
             <div style={searchContainer}>
               <input
                 ref={inputRef}
