@@ -417,10 +417,11 @@ const TeamSelectionPage: React.FC = () => {
                 </svg>
               </button>
             </div>
-            <div style={{ ...smallText, marginTop: '0.5rem', textAlign: 'right', width: '100%', minHeight: '1.25rem' }}>
+            {/* Fixed height to prevent layout shift when helper text changes */}
+            <div style={{ ...smallText, marginTop: '0.5rem', textAlign: 'right', width: '100%', height: '1.25rem' }}>
               {(() => {
                 if (loading) {
-                  return 'searching...';
+                  return 'searching';
                 }
                 if (selectedTeam) {
                   return 'hit enter to continue';
