@@ -61,7 +61,7 @@ function App() {
               <Route path="/questions" element={<QuestionsWithState />} />
               <Route
                 path="/bulk-upload"
-                element={<BulkUploadPage godMode={isGodModeEnabled} />}
+                element={<BulkUploadPage />}
               />
               <Route path="/questionnaire/:teamId" element={<AnswerQuestionnaire />} />
               <Route path="/" element={<TeamSelectionPage />} />

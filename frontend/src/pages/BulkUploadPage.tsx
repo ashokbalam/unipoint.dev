@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import BulkUploadSimple from '../components/BulkUploadSimple';
 import {
@@ -9,10 +8,6 @@ import {
   containerContent,
   h2,
   primaryButton,
-  primaryButtonHover,
-  buttonDisabled,
-  backButtonBase,
-  backButtonHover,
 } from '../App.styles';
 
 // Styles specific to this page
@@ -50,20 +45,6 @@ const styles = {
     cursor: 'pointer',
     transition: 'border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out',
     // pseudo-classes are not supported in inline styles – handle focus via CSS class if needed
-  },
-  backButton: {
-    ...backButtonBase,
-    marginRight: 'auto',
-  },
-  godModeIndicator: {
-    display: 'inline-block',
-    padding: '0.25rem 0.5rem',
-    backgroundColor: '#FFA500',
-    color: '#fff',
-    borderRadius: '0.25rem',
-    fontSize: '0.75rem',
-    fontWeight: 'bold',
-    marginLeft: '0.5rem',
   },
   noAccessMessage: {
     display: 'flex',
@@ -144,12 +125,7 @@ interface UploadResult {
   dryRun: boolean;
 }
 
-interface BulkUploadPageProps {
-  godMode: boolean;
-}
-
-const BulkUploadPage: React.FC<BulkUploadPageProps> = ({ godMode }) => {
-  const navigate = useNavigate();
+const BulkUploadPage: React.FC = () => {
   
   // State
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -206,11 +182,6 @@ const BulkUploadPage: React.FC<BulkUploadPageProps> = ({ godMode }) => {
     }
   };
 
-  // Navigate back
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   // Render loading state
   if (loading) {
     return (
@@ -227,9 +198,6 @@ const BulkUploadPage: React.FC<BulkUploadPageProps> = ({ godMode }) => {
     return (
       <div style={styles.pageContainer}>
         <div style={styles.header}>
-          <button style={styles.backButton} onClick={handleBack}>
-            &larr; Back
-          </button>
           <h1>Bulk Upload</h1>
         </div>
         <div style={styles.noAccessMessage}>
@@ -247,43 +215,10 @@ const BulkUploadPage: React.FC<BulkUploadPageProps> = ({ godMode }) => {
     );
   }
 
-  // Render no access state if not in God Mode
-  if (!godMode) {
-    return (
-      <div style={styles.pageContainer}>
-        <div style={styles.header}>
-          <button style={styles.backButton} onClick={handleBack}>
-            &larr; Back
-          </button>
-          <h1>Bulk Upload</h1>
-        </div>
-        <div style={styles.noAccessMessage}>
-          <div style={styles.noAccessIcon}>🔒</div>
-          <div style={styles.noAccessTitle}>Admin Access Required</div>
-          <div style={styles.noAccessText}>
-            You need to be in God Mode to access the bulk upload feature.
-          </div>
-          <button 
-            style={{...primaryButton}}
-            onClick={() => navigate('/')}
-          >
-            Return to Home
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div style={styles.pageContainer}>
       <div style={styles.header}>
-        <button style={styles.backButton} onClick={handleBack}>
-          &larr; Back
-        </button>
-        <h1>
-          Bulk Upload
-          <span style={styles.godModeIndicator}>GOD MODE</span>
-        </h1>
+        <h1>Bulk Upload</h1>
       </div>
 
       <div style={{...boxedContainer, width: '90%', maxWidth: '1200px'}}>
