@@ -34,7 +34,7 @@ body {
 
 h1 {
   /* Use rem for absolute consistency across nested contexts */
-  font-size: 3.2rem;
+  font-size: 5rem;
   line-height: 1.1;
 }
 
