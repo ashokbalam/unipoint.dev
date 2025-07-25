@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TwoColumnLayout from '../components/TwoColumnLayout';
 import {
@@ -19,6 +19,16 @@ const ManagePage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState<string | null>(null);
+  
+  /* -----------------------------------------------------------
+   * Check sessionStorage once on mount to persist auth per tab
+   * --------------------------------------------------------- */
+  useEffect(() => {
+    const stored = sessionStorage.getItem('managementAuthenticated');
+    if (stored === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
   
   // Card data with titles, descriptions, and routes (icons removed)
   const managementCards = [
@@ -98,6 +108,8 @@ const ManagePage: React.FC = () => {
     if (passcode === PASSCODE) {
       setIsAuthenticated(true);
       setError(null);
+      // Persist flag for the remainder of the tab's session
+      sessionStorage.setItem('managementAuthenticated', 'true');
     } else {
       setError('Incorrect passcode');
     }
