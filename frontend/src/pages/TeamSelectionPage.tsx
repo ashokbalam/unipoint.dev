@@ -565,26 +565,51 @@ const TeamSelectionPage: React.FC = () => {
       case 'questions':
         return (
           <>
-            <div style={containerHeader}>
-              <button
-                style={backBtnHover ? { ...backButtonBase, ...backButtonHover } : backButtonBase}
-                onClick={handleBack}
-                onMouseEnter={() => setBackBtnHover(true)}
-                onMouseLeave={() => setBackBtnHover(false)}
-              >
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back
-              </button>
+            {/* Three-column header layout for true centering */}
+            <div style={threeColumnHeader}>
+              {/* Left column: Back button */}
+              <div style={leftColumn}>
+                <button
+                  style={backBtnHover ? { ...backButtonBase, ...backButtonHover } : backButtonBase}
+                  onClick={handleBack}
+                  onMouseEnter={() => setBackBtnHover(true)}
+                  onMouseLeave={() => setBackBtnHover(false)}
+                >
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back to Categories
+                </button>
+              </div>
               
-              <h2 style={h2}>Answer Questions</h2>
-              {selectedTeam && selectedCategory && (
-                <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1rem', textAlign: 'center' }}>
-                  Team: {selectedTeam.name} | Category: {selectedCategory.name}
-                </div>
-              )}
+              {/* Center column: Team and Category info */}
+              <div style={centerColumn}>
+                {selectedTeam && selectedCategory && (
+                  <div style={{
+                    fontSize: '1rem',
+                    color: '#6b7280',
+                    fontWeight: 500,
+                  }}>
+                    Squad: {selectedTeam.name} | Category: {selectedCategory.name}
+                  </div>
+                )}
+              </div>
+              
+              {/* Right column: Empty space for balance */}
+              <div style={rightColumn}></div>
             </div>
+            
+            {/* Title */}
+            <h2
+              style={{
+                ...h2,
+                textAlign: 'center',
+                marginTop: '0.5rem', // spacing between team name row and title
+                marginBottom: '1rem',
+              }}
+            >
+              Answer Questions
+            </h2>
             
             <div style={containerContent}>
               {loading ? (
