@@ -143,7 +143,7 @@ export const navigationLinkHover = {
 
 // Active route styling (e.g., via NavLink "isActive")
 export const navigationLinkActive = {
-  color: 'var(--color-secondary)',         // active colour matches hover
+  color: 'var(--color-primary)',           // active link now uses primary colour
   /* underline removed – active bullet indicator handled in component */
 };
 

@@ -39,10 +39,12 @@ const Navigation: React.FC<NavigationProps> = ({
   const bulletStyle: React.CSSProperties = {
     display: 'inline-block',
     marginRight: '0.35rem',
-    color: 'var(--color-secondary)',
+    /* Use primary color so active link stands out */
+    color: 'var(--color-primary)',
     fontSize: '1.5rem',
-    lineHeight: 0,
-    verticalAlign: 'middle',
+    /* Align bullet with the baseline of the text for perfect centering */
+    lineHeight: 1,
+    verticalAlign: 'baseline',
   };
 
   return (
