@@ -27,7 +27,8 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   const containerStyle: React.CSSProperties = {
     display: 'flex',
     width: '100%',
-    minHeight: '100vh',
+    /* Occupy exactly full viewport height */
+    height: '100vh',
     background: 'var(--color-background)',
     // Vertically centre the two-column block
     alignItems: 'center',
