@@ -75,22 +75,27 @@ const Navigation: React.FC<NavigationProps> = ({
               to={item.path}
               style={({ isActive }) => {
                 /* ------------------------------------------------------------
-                 * Ensure active (primary colour) is never overridden by hover
+                 * Separate color logic from transform/scale logic
                  * ---------------------------------------------------------- */
                 // Determine true active status, taking custom Manage logic into account
                 const active =
                   item.id === 'manage' ? isManageActiveGlobal : isActive;
 
-                // Apply default link style
+                // Start with base link style
                 const baseStyle: React.CSSProperties = { ...navigationLink };
-
-                // If link is active → primary colour
+                
+                // Apply color logic: active links always use primary color
                 if (active) {
-                  Object.assign(baseStyle, navigationLinkActive);
+                  Object.assign(baseStyle, { color: navigationLinkActive.color });
                 }
-                // If not active but hovered → secondary colour
+                // Non-active links use secondary color when hovered
                 else if (hoveredLink === item.id) {
-                  Object.assign(baseStyle, navigationLinkHover);
+                  Object.assign(baseStyle, { color: navigationLinkHover.color });
+                }
+                
+                // Apply transform logic: any link scales up when hovered
+                if (hoveredLink === item.id) {
+                  Object.assign(baseStyle, { transform: navigationLinkHover.transform });
                 }
 
                 return baseStyle;
