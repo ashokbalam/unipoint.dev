@@ -15,9 +15,9 @@ interface TwoColumnLayoutProps {
 const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   title,
   children,
-  // Default to a balanced 50/50 split
-  titleWidth = '50%',
-  contentWidth = '50%',
+  // Default split: 40 % title / 60 % content (per latest spec)
+  titleWidth = '40%',
+  contentWidth = '60%',
   gap = '2rem',
   titleAlign = 'top',
   customTitleStyles = {},
@@ -29,6 +29,8 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     width: '100%',
     minHeight: '100vh',
     background: 'var(--color-background)',
+    // Vertically centre the two-column block
+    alignItems: 'center',
     padding: '2rem',
   };
 
