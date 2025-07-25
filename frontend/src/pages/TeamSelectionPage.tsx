@@ -24,8 +24,6 @@ import {
   buttonDisabled,
   backButtonBase,
   backButtonHover,
-  cardBase,
-  cardHover,
   smallText,
 } from '../App.styles';
 
@@ -274,6 +272,26 @@ const TeamSelectionPage: React.FC = () => {
     marginBottom: '0.25rem',
   };
   
+  /* -------------------------------------------------
+   * Category Card (consistent border + subtle hover)
+   * ------------------------------------------------- */
+  const categoryCardBase = {
+    border: '1px solid #e5e7eb',               // always-visible border
+    borderRadius: '0.75rem',
+    backgroundColor: '#ffffff',
+    padding: '1rem',
+    cursor: 'pointer',
+    transition: 'background 0.2s, border-color 0.2s',
+    marginBottom: '0.75rem',
+    display: 'flex',
+    alignItems: 'center',
+  };
+
+  const categoryCardHover = {
+    backgroundColor: 'rgba(251, 146, 60, 0.08)', // light secondary tint
+    borderColor: 'var(--color-secondary)',       // highlight border
+  };
+
   const questionContainer = {
     marginBottom: '1.5rem',
     padding: '1rem',
@@ -471,7 +489,11 @@ const TeamSelectionPage: React.FC = () => {
                   {categories.map(category => (
                     <div
                       key={category.id}
-                      style={categoryHover === category.id ? { ...cardBase, ...cardHover, marginBottom: '0.75rem' } : { ...cardBase, marginBottom: '0.75rem' }}
+                      style={
+                        categoryHover === category.id
+                          ? { ...categoryCardBase, ...categoryCardHover }
+                          : categoryCardBase
+                      }
                       onClick={() => handleCategorySelect(category)}
                       onMouseEnter={() => setCategoryHover(category.id)}
                       onMouseLeave={() => setCategoryHover(null)}
