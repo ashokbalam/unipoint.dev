@@ -45,15 +45,6 @@ const Navigation: React.FC<NavigationProps> = ({
     lineHeight: 1,
     verticalAlign: 'baseline',
   };
-  // Style for thin vertical separator
-  const separatorStyle: React.CSSProperties = {
-    /* Horizontal separator between vertically-stacked links */
-    width: '100%',
-    height: '1px',               // thin horizontal line
-    backgroundColor: 'var(--color-secondary)',
-    /* Vertical spacing above & below the line */
-    margin: '0.375rem 0', // reduced padding
-  };
 
   return (
     <nav
@@ -92,8 +83,6 @@ const Navigation: React.FC<NavigationProps> = ({
               </NavLink>
             </li>
 
-            {/* Insert separator after the first item */}
-            {idx === 0 && <li style={separatorStyle} aria-hidden="true" />}
           </React.Fragment>
         ))}
       </ul>
