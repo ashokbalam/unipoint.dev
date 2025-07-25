@@ -52,7 +52,7 @@ const Navigation: React.FC<NavigationProps> = ({
     height: '1px',               // thin horizontal line
     backgroundColor: 'var(--color-secondary)',
     /* Vertical spacing above & below the line */
-    margin: '0.75rem 0',
+    margin: '0.375rem 0', // reduced padding
   };
 
   return (
