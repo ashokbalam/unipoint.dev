@@ -45,6 +45,14 @@ const Navigation: React.FC<NavigationProps> = ({
     lineHeight: 1,
     verticalAlign: 'baseline',
   };
+  // Style for thin vertical separator
+  const separatorStyle: React.CSSProperties = {
+    width: '1px',
+    height: '1.75rem', // roughly aligns with link height
+    backgroundColor: 'var(--color-border, #d1d5db)',
+    margin: '0.25rem 0.75rem',
+    alignSelf: 'center',
+  };
 
   return (
     <nav
@@ -54,9 +62,11 @@ const Navigation: React.FC<NavigationProps> = ({
       onMouseLeave={() => setNavHovered(false)}
     >
       <ul style={navigationList}>
-        {navItems.map((item) => (
-          <li key={item.id} style={navigationItem}>
-            <NavLink
+        {navItems.map((item, idx) => (
+          <React.Fragment key={item.id}>
+            {/* Navigation Link */}
+            <li style={navigationItem}>
+              <NavLink
               to={item.path}
               style={({ isActive }) => {
                 // base style applied to every link
@@ -78,8 +88,12 @@ const Navigation: React.FC<NavigationProps> = ({
                   {item.label}
                 </>
               )}
-            </NavLink>
-          </li>
+              </NavLink>
+            </li>
+
+            {/* Insert separator after the first item */}
+            {idx === 0 && <li style={separatorStyle} aria-hidden="true" />}
+          </React.Fragment>
         ))}
       </ul>
     </nav>
