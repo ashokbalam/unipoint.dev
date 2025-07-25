@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { pageWrapper, boxedContainer, containerHeader, containerContent } from '../App.styles';
+import { containerHeader, containerContent } from '../App.styles';
+import TwoColumnLayout from '../components/TwoColumnLayout';
 import {
   backButton,
   backButtonHover,
@@ -63,7 +63,6 @@ interface RubricRange {
 }
 
 const Questions: React.FC = () => {
-  const navigate = useNavigate();
   
   // State for team selection
   const [teamSearch, setTeamSearch] = useState('');
@@ -421,7 +420,7 @@ const Questions: React.FC = () => {
   
   const formSelect = {
     ...formInput,
-    appearance: 'none',
+    appearance: 'none' as any,
     backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\' stroke=\'%236b7280\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E")',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right 0.5rem center',
@@ -739,8 +738,7 @@ const Questions: React.FC = () => {
   };
   
   return (
-    <div style={pageWrapper}>
-      <div style={boxedContainer}>
+    <TwoColumnLayout title="Questions">
         <div style={containerHeader}>
           <h1 style={sectionHeader}>Questions</h1>
           
@@ -1004,7 +1002,6 @@ const Questions: React.FC = () => {
                           <div style={formGroup}>
                             <label style={formLabel}>Question Text</label>
                             <input
-                              type="text"
                               placeholder="Enter question text"
                               style={questionTextFocused ? { ...formInput, ...formInputFocus } : formInput}
                               value={newQuestionText}
@@ -1088,8 +1085,7 @@ const Questions: React.FC = () => {
             </>
           )}
         </div>
-      </div>
-    </div>
+    </TwoColumnLayout>
   );
 };
 

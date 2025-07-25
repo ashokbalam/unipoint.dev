@@ -10,13 +10,14 @@ import {
   submitButtonHover
 } from './AnswerQuestionnaire.styles';
 
-// Common boxed layout styles
+// Common container section styles
 import {
-  pageWrapper,
-  boxedContainer,
   containerHeader,
   containerContent
 } from '../App.styles';
+
+// Shared two-column layout
+import TwoColumnLayout from '../components/TwoColumnLayout';
 
 const mockQuestions = [
   { id: 1, text: 'What is your team’s main goal?' },
@@ -41,8 +42,7 @@ const AnswerQuestionnaire: React.FC = () => {
   };
 
   return (
-    <div style={pageWrapper}>
-      <div style={boxedContainer}>
+    <TwoColumnLayout title="Team Questionnaire">
         <div style={containerHeader}>
           <h2 style={title}>Team Questionnaire</h2>
         </div>
@@ -77,8 +77,7 @@ const AnswerQuestionnaire: React.FC = () => {
             </form>
           )}
         </div>
-      </div>
-    </div>
+    </TwoColumnLayout>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { pageWrapper, boxedContainer, containerHeader, containerContent } from '../App.styles';
+import { containerHeader, containerContent } from '../App.styles';
+import TwoColumnLayout from '../components/TwoColumnLayout';
 
 // Interfaces
 interface Team {
@@ -715,8 +716,7 @@ const Categories: React.FC = () => {
   };
   
   return (
-    <div style={pageWrapper}>
-      <div style={boxedContainer}>
+    <TwoColumnLayout title="Categories">
         {/* Header Section with Inline Team Selection */}
         <div style={containerHeader}>
           <h1 style={heading}>Categories</h1>
@@ -1077,8 +1077,7 @@ const Categories: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
-    </div>
+    </TwoColumnLayout>
   );
 };
 

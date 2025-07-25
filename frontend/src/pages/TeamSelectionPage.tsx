@@ -28,6 +28,8 @@ import {
 } from '../App.styles';
 
 // Interfaces for the multi-step flow
+// Two-column layout used across admin pages
+import TwoColumnLayout from '../components/TwoColumnLayout';
 interface Team {
   id: string;
   name: string;
@@ -727,16 +729,25 @@ const TeamSelectionPage: React.FC = () => {
           )}
         </div>
       ) : (
-        <div style={pageWrapper}>
-          <div style={boxedContainer}>
+        /* Use shared TwoColumnLayout for the remaining steps */
+        <TwoColumnLayout
+          title={
+            currentStep === 'category'
+              ? 'Category Selection'
+              : currentStep === 'questions'
+              ? 'Questions'
+              : 'Estimation Results'
+          }
+        >
+          <>
             {renderStepContent()}
             {error && (
               <div style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}>
                 {error}
               </div>
             )}
-          </div>
-        </div>
+          </>
+        </TwoColumnLayout>
       )}
     </>
   );

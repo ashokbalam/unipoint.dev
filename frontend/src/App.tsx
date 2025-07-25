@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useState, useCallback } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import OnboardTenant from './pages/OnboardTenant';
 import Categories from './pages/Categories';
 import Questions from './pages/Questions';
 import AnswerQuestionnaire from './pages/AnswerQuestionnaire';
 import TeamSelectionPage from './pages/TeamSelectionPage';
+import BulkUploadPage from './pages/BulkUploadPage';
 import Footer from './components/Footer';
 import Navigation from './components/Navigation';
 import {
@@ -20,10 +21,8 @@ function CategoriesWithState() {
 }
 
 function QuestionsWithState() {
-  const location = useLocation();
-  const tenantId = location.state?.tenantId || '';
-  const categoryId = location.state?.categoryId || '';
-  return <Questions tenantId={tenantId} categoryId={categoryId} />;
+  // The Questions page handles its own routing/state internally
+  return <Questions />;
 }
 
 function App() {
@@ -60,6 +59,10 @@ function App() {
               <Route path="/onboard" element={<OnboardTenant />} />
               <Route path="/categories" element={<CategoriesWithState />} />
               <Route path="/questions" element={<QuestionsWithState />} />
+              <Route
+                path="/bulk-upload"
+                element={<BulkUploadPage godMode={isGodModeEnabled} />}
+              />
               <Route path="/questionnaire/:teamId" element={<AnswerQuestionnaire />} />
               <Route path="/" element={<TeamSelectionPage />} />
               <Route path="*" element={<TeamSelectionPage />} />

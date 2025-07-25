@@ -34,6 +34,7 @@ const Navigation: React.FC<NavigationProps> = ({
     { path: '/onboard', label: 'Teams', id: 'teams', adminOnly: true },
     { path: '/categories', label: 'Categories', id: 'category', adminOnly: true },
     { path: '/questions', label: 'Questions', id: 'questions', adminOnly: true },
+    { path: '/bulk-upload', label: 'Upload', id: 'upload', adminOnly: true },
   ];
 
   return (
@@ -68,7 +69,6 @@ const Navigation: React.FC<NavigationProps> = ({
               }}
               onMouseEnter={() => setHoveredLink(item.id)}
               onMouseLeave={() => setHoveredLink(null)}
-              aria-current={({ isActive }) => (isActive ? 'page' : undefined)}
               onClick={(e) => {
                 if (item.adminOnly && !isGodModeEnabled) {
                   e.preventDefault();

@@ -9,6 +9,8 @@ import { Question } from './models/Question';
 import { TenantController } from './controllers/TenantController';
 import { CategoryController } from './controllers/CategoryController';
 import { QuestionController } from './controllers/QuestionController';
+import multer from 'multer';
+import { BulkUploadController } from './controllers/BulkUploadController';
 
 // Load environment variables
 dotenv.config();
@@ -58,6 +60,25 @@ AppDataSource.initialize()
     const app = express();
     app.use(cors());
     app.use(express.json());
+
+    /**
+     * Multer configuration
+     *  - Limit file size to 10 MB
+     *  - Accept only .csv or .json uploads
+     */
+    const upload = multer({
+      limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+      fileFilter: (_req, file, cb) => {
+        const isCsv = file.mimetype === 'text/csv' || file.originalname.match(/\.csv$/i);
+        const isJson =
+          file.mimetype === 'application/json' || file.originalname.match(/\.json$/i);
+        if (isCsv || isJson) {
+          cb(null, true);
+        } else {
+          cb(new Error('Only CSV and JSON files are allowed.'));
+        }
+      },
+    });
     
     // Tenant Routes
     app.post('/tenants', TenantController.createTenant);
@@ -73,6 +94,14 @@ AppDataSource.initialize()
     // Question Routes
     app.post('/questions', QuestionController.createQuestion);
     app.get('/questions', QuestionController.getQuestions);
+
+    // Bulk Upload Routes
+    app.get('/bulk-upload/template', BulkUploadController.getTemplate);
+    app.post(
+      '/tenants/:tenantId/bulk-upload',
+      upload.array('files'),
+      BulkUploadController.bulkUpload
+    );
 
     // Health check route
     app.get('/health', (_req, res) => {
