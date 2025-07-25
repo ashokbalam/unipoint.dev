@@ -47,13 +47,12 @@ const Navigation: React.FC<NavigationProps> = ({
   };
   // Style for thin vertical separator
   const separatorStyle: React.CSSProperties = {
-    width: '1px',
-    height: '1.75rem', // roughly aligns with link height
-    /* Use secondary colour so separator is more visible */
+    /* Horizontal separator between vertically-stacked links */
+    width: '100%',
+    height: '1px',               // thin horizontal line
     backgroundColor: 'var(--color-secondary)',
-    /* Narrower top/bottom spacing for a slimmer look  */
-    margin: '0.125rem 0.75rem',
-    alignSelf: 'center',
+    /* Vertical spacing above & below the line */
+    margin: '0.75rem 0',
   };
 
   return (
