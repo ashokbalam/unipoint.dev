@@ -30,8 +30,8 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     /* Occupy exactly full viewport height */
     height: '100vh',
     background: 'var(--color-background)',
-    // Vertically centre the two-column block
-    alignItems: 'center',
+    // Stack content from the top of the viewport
+    alignItems: 'flex-start',
     padding: '2rem',
   };
 
