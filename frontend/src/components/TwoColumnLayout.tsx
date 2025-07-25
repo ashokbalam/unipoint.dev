@@ -15,8 +15,9 @@ interface TwoColumnLayoutProps {
 const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   title,
   children,
-  titleWidth = '30%',
-  contentWidth = '70%',
+  // Default to a balanced 50/50 split
+  titleWidth = '50%',
+  contentWidth = '50%',
   gap = '2rem',
   titleAlign = 'top',
   customTitleStyles = {},
@@ -54,6 +55,8 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   // Content column style
   const contentColumnStyle: React.CSSProperties = {
     width: contentWidth,
+    // Unified height requirement: 80 % of viewport
+    height: '80vh',
     backgroundColor: '#ffffff',
     borderRadius: '1.5rem',
     border: '1px solid #e0e7ff',
@@ -88,6 +91,7 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     ? {
         ...contentColumnStyle,
         width: '100%',
+        height: 'auto', // let content dictate height on small screens
       }
     : contentColumnStyle;
 
