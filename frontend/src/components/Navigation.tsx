@@ -35,6 +35,16 @@ const Navigation: React.FC<NavigationProps> = ({
     { path: '/manage', label: 'Manage', id: 'manage', adminOnly: true },
   ];
 
+  // Style for the active bullet indicator
+  const bulletStyle: React.CSSProperties = {
+    display: 'inline-block',
+    marginRight: '0.35rem',
+    color: 'var(--color-secondary)',
+    fontSize: '1.5rem',
+    lineHeight: 0,
+    verticalAlign: 'middle',
+  };
+
   return (
     <nav
       style={navHovered ? rightNavigationHover : rightNavigation}
@@ -74,7 +84,12 @@ const Navigation: React.FC<NavigationProps> = ({
                 }
               }}
             >
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  {isActive && <span style={bulletStyle}>•</span>}
+                  {item.label}
+                </>
+              )}
             </NavLink>
           </li>
         ))}

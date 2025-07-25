@@ -130,8 +130,8 @@ export const navigationLink = {
   // Ensure transforms affect the element (required for scaling)
   display: 'inline-block',
   transformOrigin: 'center',
-  borderBottom: '2px solid transparent', // placeholder for active underline
-  transition: 'color 0.2s ease, transform 0.2s ease, border-bottom 0.2s ease',
+  /* underline removed – bullet indicator handled in component */
+  transition: 'color 0.2s ease, transform 0.2s ease',
   cursor: 'pointer',
 };
 
@@ -144,7 +144,7 @@ export const navigationLinkHover = {
 // Active route styling (e.g., via NavLink "isActive")
 export const navigationLinkActive = {
   color: 'var(--color-secondary)',         // active colour matches hover
-  borderBottom: '2px solid var(--color-secondary)', // underline for active page
+  /* underline removed – active bullet indicator handled in component */
 };
 
 // Disabled / God-Mode-locked link styling
