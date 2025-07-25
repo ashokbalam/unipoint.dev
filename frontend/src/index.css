@@ -3,9 +3,9 @@
   --font-body: 'Inter', sans-serif;
   
   /* Color Palette */
-  --color-primary: #1F3A93;    /* Deep Indigo Blue */
-  --color-secondary: #FFA500;  /* Orange */
-  --color-background: #F9FAFB; /* Very light gray */
+  --color-background: #E7E7E7; /* Very light gray */
+  --color-primary: #485696;    /* Deep Indigo Blue */
+  --color-secondary: #F24C00;  /* Orange */
   --color-text: #374151;       /* Gray 700 */
   --color-text-light: #6B7280; /* Gray 500 */
   --color-border: #E5E7EB;     /* Gray 200 */

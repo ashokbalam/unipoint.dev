@@ -423,3 +423,186 @@ export const containerContent = {
   flexDirection: 'column' as const,
   overflowY: 'auto' as const,
 };
+
+
+/* ------------------------------------------------------------------
+ * GLOBAL DESIGN-TOKEN BASED STYLE SYSTEM
+ * ----------------------------------------------------------------- */
+
+/* -------------------------------------------------
+ * Typography System
+ * ------------------------------------------------- */
+export const typeScale = {
+  xs: '0.75rem',   // 12px
+  sm: '0.875rem',  // 14px
+  md: '1rem',      // 16px (base)
+  lg: '1.125rem',  // 18px
+  xl: '1.375rem',  // 22px  (navigation link / large input)
+  '2xl': '1.75rem',// 28px
+  '3xl': '2rem',   // 32px
+  '4xl': '2.5rem', // 40px
+};
+
+export const fontWeights = {
+  light: 300,
+  normal: 400,
+  medium: 500,
+  semibold: 600,
+  bold: 700,
+  extrabold: 800,
+  black: 900,
+};
+
+// Heading styles (h1-h4)
+export const headingBase = {
+  fontFamily: 'var(--font-heading)',
+  color: 'var(--color-text)',
+  lineHeight: 1.2,
+  margin: 0,
+};
+
+export const h1 = { ...headingBase, fontSize: typeScale['4xl'], fontWeight: fontWeights.black };
+export const h2 = { ...headingBase, fontSize: typeScale['3xl'], fontWeight: fontWeights.extrabold };
+export const h3 = { ...headingBase, fontSize: typeScale['2xl'], fontWeight: fontWeights.bold };
+export const h4 = { ...headingBase, fontSize: typeScale.xl,    fontWeight: fontWeights.bold };
+
+// Body / small text
+export const bodyText = {
+  fontFamily: 'var(--font-body)',
+  fontSize: typeScale.md,
+  color: 'var(--color-text)',
+  lineHeight: 1.6,
+};
+
+export const smallText = {
+  ...bodyText,
+  fontSize: typeScale.sm,
+};
+
+/* -------------------------------------------------
+ * Button System
+ * ------------------------------------------------- */
+
+const baseButton = {
+  fontFamily: 'var(--font-body)',
+  fontWeight: fontWeights.semibold,
+  borderRadius: '0.375rem',
+  padding: '0.625rem 1.25rem',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  border: '1px solid transparent',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  userSelect: 'none' as const,
+  lineHeight: 1.25,
+};
+
+export const primaryButton = {
+  ...baseButton,
+  backgroundColor: 'var(--color-primary)',
+  color: '#ffffff',
+};
+
+export const primaryButtonHover = {
+  backgroundColor: '#4338ca',
+};
+
+export const secondaryButton = {
+  ...baseButton,
+  backgroundColor: 'var(--color-secondary)',
+  color: '#ffffff',
+};
+
+export const secondaryButtonHover = {
+  backgroundColor: '#ea580c',
+};
+
+export const buttonDisabled = {
+  ...baseButton,
+  backgroundColor: '#9ca3af',
+  cursor: 'not-allowed',
+  color: '#ffffff',
+};
+
+// Button size modifiers
+export const buttonSmall  = { padding: '0.375rem 0.75rem', fontSize: typeScale.sm  };
+export const buttonMedium = { padding: '0.625rem 1.25rem', fontSize: typeScale.md  };
+export const buttonLarge  = { padding: '0.75rem 1.5rem',   fontSize: typeScale.lg  };
+
+/* -------------------------------------------------
+ * Input System
+ * ------------------------------------------------- */
+
+export const inputBase = {
+  width: '100%',
+  padding: '0.75rem 1rem',
+  border: '1px solid var(--color-border)',
+  borderRadius: '0.5rem',
+  fontFamily: 'var(--font-heading)',
+  fontWeight: fontWeights.semibold,
+  fontSize: typeScale.xl,          // Matches navigation link size (1.375rem)
+  outline: 'none',
+  color: 'var(--color-primary)',
+  backgroundColor: 'transparent',
+  transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+  boxSizing: 'border-box' as const,
+  lineHeight: 1.5,
+};
+
+export const inputFocus = {
+  borderColor: 'var(--color-primary)',
+  boxShadow: '0 0 0 3px rgba(99,102,241,0.2)',
+};
+
+export const inputError = {
+  borderColor: '#ef4444',
+};
+
+/* -------------------------------------------------
+ * Header / Section System
+ * ------------------------------------------------- */
+
+export const pageHeader = {
+  ...h2,
+  marginBottom: '1.5rem',
+};
+
+export const sectionHeader = {
+  ...h3,
+  marginBottom: '1rem',
+};
+
+/* -------------------------------------------------
+ * Common Interactive Elements
+ * ------------------------------------------------- */
+
+// Generic card
+export const cardBase = {
+  border: '1px solid #e5e7eb',
+  borderRadius: '0.75rem',
+  backgroundColor: '#ffffff',
+  boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+  padding: '1rem',
+  transition: 'all 0.2s ease',
+  cursor: 'pointer',
+};
+
+export const cardHover = {
+  transform: 'translateY(-2px)',
+  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+  borderColor: 'var(--color-primary)',
+};
+
+// Back button (icon + text)
+export const backButtonBase = {
+  ...baseButton,
+  backgroundColor: 'transparent',
+  border: 'none',
+  color: 'var(--color-primary)',
+  padding: 0,
+};
+
+export const backButtonHover = {
+  color: '#4338ca',
+};

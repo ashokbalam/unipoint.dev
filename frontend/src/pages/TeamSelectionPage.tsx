@@ -2,23 +2,30 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {
-  searchInput,
-  arrowButton,
-  arrowButtonDisabled,
-  teamTitle,
-  pageContainer,
-  contentWrapper,
   searchContainer,
   suggestionText,
   suggestionSpan,
+  pageContainer,
+  contentWrapper,
 } from './TeamSelectionPage.styles';
 
-// Import common container styles
+// Import common container styles and design system
 import {
   pageWrapper,
   boxedContainer,
   containerHeader,
   containerContent,
+  inputBase,
+  inputFocus,
+  h2,
+  primaryButton,
+  primaryButtonHover,
+  buttonDisabled,
+  backButtonBase,
+  backButtonHover,
+  cardBase,
+  cardHover,
+  smallText,
 } from '../App.styles';
 
 // Interfaces for the multi-step flow
@@ -243,73 +250,7 @@ const TeamSelectionPage: React.FC = () => {
     }
   };
   
-  // Common styles
-  const pageTitle = {
-    fontSize: '1.75rem',
-    fontWeight: 700,
-    color: 'var(--color-text)',
-    marginBottom: '1.5rem',
-    textAlign: 'center' as const,
-  };
-  
-  const backButton = {
-    background: 'none',
-    border: 'none',
-    color: 'var(--color-primary)',
-    padding: '0.5rem',
-    cursor: 'pointer',
-    fontSize: '0.875rem',
-    fontWeight: 600,
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.25rem',
-    transition: 'color 0.2s',
-  };
-  
-  const backButtonHover = {
-    color: '#4338ca',
-  };
-  
-  const submitButton = {
-    backgroundColor: 'var(--color-primary)',
-    color: 'white',
-    border: 'none',
-    borderRadius: '0.375rem',
-    padding: '0.75rem 1.5rem',
-    fontSize: '1rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-    marginTop: '1.5rem',
-    width: '100%',
-  };
-  
-  const submitButtonHover = {
-    backgroundColor: '#4338ca',
-  };
-  
-  const submitButtonDisabled = {
-    ...submitButton,
-    backgroundColor: '#9ca3af',
-    cursor: 'not-allowed',
-  };
-  
-  const categoryCard = {
-    padding: '1rem',
-    borderRadius: '0.5rem',
-    border: '1px solid #e5e7eb',
-    marginBottom: '0.75rem',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-  };
-  
-  const categoryCardHover = {
-    backgroundColor: '#f9fafb',
-    borderColor: 'var(--color-primary)',
-    transform: 'translateY(-2px)',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-  };
-  
+  // Custom styles for components
   const categoryName = {
     fontSize: '1.125rem',
     fontWeight: 600,
@@ -346,10 +287,6 @@ const TeamSelectionPage: React.FC = () => {
     transition: 'background-color 0.2s',
   };
   
-  const optionContainerHover = {
-    backgroundColor: '#f9fafb',
-  };
-  
   const optionLabel = {
     fontSize: '0.875rem',
     color: 'var(--color-text)',
@@ -364,13 +301,6 @@ const TeamSelectionPage: React.FC = () => {
   const resultContainer = {
     textAlign: 'center' as const,
     padding: '2rem',
-  };
-  
-  const resultTitle = {
-    fontSize: '1.5rem',
-    fontWeight: 700,
-    color: 'var(--color-text)',
-    marginBottom: '1rem',
   };
   
   const resultScore = {
@@ -399,19 +329,19 @@ const TeamSelectionPage: React.FC = () => {
       case 'team':
         return (
           <div style={contentWrapper}>
-            <h2 style={teamTitle}>Pick Your Squad</h2>
+            <h2 style={h2}>Pick Your Squad</h2>
             <div style={searchContainer}>
               <input
                 ref={inputRef}
                 type="text"
                 style={{
-                  ...searchInput,
-                  borderColor: selectedTeam ? 'var(--color-primary)' : 'black',
-                  boxShadow: selectedTeam ? '0 0 0 3px rgba(94, 43, 255, 0.1)' : 'none',
-                  fontWeight: '300',
-                  ...(document.activeElement === inputRef?.current ? {
+                  ...inputBase,
+                  borderRight: 'none',
+                  paddingRight: '15%',
+                  ...(document.activeElement === inputRef?.current ? inputFocus : {}),
+                  ...(selectedTeam ? {
                     borderColor: 'var(--color-primary)',
-                    boxShadow: '0 0 0 3px rgba(94,43,255,0.1)'
+                    boxShadow: '0 0 0 3px rgba(94, 43, 255, 0.1)'
                   } : {})
                 }}
                 placeholder="start typing your squad name"
@@ -443,7 +373,13 @@ const TeamSelectionPage: React.FC = () => {
               <button
                 onClick={handleTeamSelect}
                 disabled={!selectedTeam}
-                style={selectedTeam ? (arrowBtnHover ? { ...arrowButton, background: 'var(--color-primary)' } : arrowButton) : arrowButtonDisabled}
+                style={
+                  !selectedTeam 
+                    ? buttonDisabled
+                    : arrowBtnHover 
+                      ? { ...primaryButton, ...primaryButtonHover, borderRadius: '0 0.5rem 0.5rem 0', position: 'absolute', right: 0, top: 0, width: '15%', height: '100%', zIndex: 10 }
+                      : { ...primaryButton, borderRadius: '0 0.5rem 0.5rem 0', position: 'absolute', right: 0, top: 0, width: '15%', height: '100%', zIndex: 10 }
+                }
                 onMouseEnter={() => setArrowBtnHover(true)}
                 onMouseLeave={() => setArrowBtnHover(false)}
               >
@@ -452,7 +388,7 @@ const TeamSelectionPage: React.FC = () => {
                 </svg>
               </button>
             </div>
-            <div style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', textAlign: 'right', width: '100%', minHeight: '1.25rem' }}>
+            <div style={{ ...smallText, marginTop: '0.5rem', textAlign: 'right', width: '100%', minHeight: '1.25rem' }}>
               {(() => {
                 if (loading) {
                   return 'searching...';
@@ -477,18 +413,18 @@ const TeamSelectionPage: React.FC = () => {
           <>
             <div style={containerHeader}>
               <button
-                style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
+                style={backBtnHover ? { ...backButtonBase, ...backButtonHover } : backButtonBase}
                 onClick={handleBack}
                 onMouseEnter={() => setBackBtnHover(true)}
                 onMouseLeave={() => setBackBtnHover(false)}
               >
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
                 Back
               </button>
               
-              <h2 style={pageTitle}>Select a Category</h2>
+              <h2 style={h2}>Select a Category</h2>
               {selectedTeam && (
                 <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1rem', textAlign: 'center' }}>
                   Team: {selectedTeam.name}
@@ -510,7 +446,7 @@ const TeamSelectionPage: React.FC = () => {
                   {categories.map(category => (
                     <div
                       key={category.id}
-                      style={categoryHover === category.id ? { ...categoryCard, ...categoryCardHover } : categoryCard}
+                      style={categoryHover === category.id ? { ...cardBase, ...cardHover, marginBottom: '0.75rem' } : { ...cardBase, marginBottom: '0.75rem' }}
                       onClick={() => handleCategorySelect(category)}
                       onMouseEnter={() => setCategoryHover(category.id)}
                       onMouseLeave={() => setCategoryHover(null)}
@@ -532,18 +468,18 @@ const TeamSelectionPage: React.FC = () => {
           <>
             <div style={containerHeader}>
               <button
-                style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
+                style={backBtnHover ? { ...backButtonBase, ...backButtonHover } : backButtonBase}
                 onClick={handleBack}
                 onMouseEnter={() => setBackBtnHover(true)}
                 onMouseLeave={() => setBackBtnHover(false)}
               >
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
                 Back
               </button>
               
-              <h2 style={pageTitle}>Answer Questions</h2>
+              <h2 style={h2}>Answer Questions</h2>
               {selectedTeam && selectedCategory && (
                 <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1rem', textAlign: 'center' }}>
                   Team: {selectedTeam.name} | Category: {selectedCategory.name}
@@ -592,10 +528,10 @@ const TeamSelectionPage: React.FC = () => {
                     disabled={!allQuestionsAnswered}
                     style={
                       !allQuestionsAnswered
-                        ? submitButtonDisabled
+                        ? { ...buttonDisabled, width: '100%', marginTop: '1.5rem' }
                         : submitBtnHover
-                        ? { ...submitButton, ...submitButtonHover }
-                        : submitButton
+                        ? { ...primaryButton, ...primaryButtonHover, width: '100%', marginTop: '1.5rem' }
+                        : { ...primaryButton, width: '100%', marginTop: '1.5rem' }
                     }
                     onMouseEnter={() => setSubmitBtnHover(true)}
                     onMouseLeave={() => setSubmitBtnHover(false)}
@@ -613,18 +549,18 @@ const TeamSelectionPage: React.FC = () => {
           <>
             <div style={containerHeader}>
               <button
-                style={backBtnHover ? { ...backButton, ...backButtonHover } : backButton}
+                style={backBtnHover ? { ...backButtonBase, ...backButtonHover } : backButtonBase}
                 onClick={handleBack}
                 onMouseEnter={() => setBackBtnHover(true)}
                 onMouseLeave={() => setBackBtnHover(false)}
               >
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
                 Back to Questions
               </button>
               
-              <h2 style={pageTitle}>Estimation Results</h2>
+              <h2 style={h2}>Estimation Results</h2>
             </div>
             
             <div style={containerContent}>
@@ -639,7 +575,10 @@ const TeamSelectionPage: React.FC = () => {
                 
                 <button
                   onClick={handleReset}
-                  style={submitBtnHover ? { ...submitButton, ...submitButtonHover } : submitButton}
+                  style={submitBtnHover 
+                    ? { ...primaryButton, ...primaryButtonHover, width: '100%', marginTop: '1.5rem' } 
+                    : { ...primaryButton, width: '100%', marginTop: '1.5rem' }
+                  }
                   onMouseEnter={() => setSubmitBtnHover(true)}
                   onMouseLeave={() => setSubmitBtnHover(false)}
                 >
