@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TwoColumnLayout from '../components/TwoColumnLayout';
 import {
-  containerHeader,
   containerContent,
-  h2,
   bodyText,
   cardBase,
   cardHover,
@@ -117,9 +115,6 @@ const ManagePage: React.FC = () => {
   
   return (
     <TwoColumnLayout title="Manage">
-      <div style={containerHeader}>
-        <h2 style={h2}>Management Dashboard</h2>
-      </div>
       
       <div style={containerContent}>
         <div style={cardGrid}>
