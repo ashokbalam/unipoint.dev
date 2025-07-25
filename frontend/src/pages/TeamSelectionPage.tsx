@@ -7,6 +7,9 @@ import {
   suggestionSpan,
   pageContainer,
   contentWrapper,
+  searchInput,
+  arrowButton,
+  arrowButtonDisabled,
 } from './TeamSelectionPage.styles';
 
 // Import common container styles and design system
@@ -15,8 +18,6 @@ import {
   boxedContainer,
   containerHeader,
   containerContent,
-  inputBase,
-  inputFocus,
   h2,
   primaryButton,
   primaryButtonHover,
@@ -323,6 +324,20 @@ const TeamSelectionPage: React.FC = () => {
     marginBottom: '0.5rem',
   };
   
+  // Modified searchInput with updated font size
+  const customSearchInput = {
+    ...searchInput,
+    fontSize: '1.375rem', // Match navigation link size
+    fontFamily: 'var(--font-heading)',
+  };
+  
+  // Modified suggestionText with updated font size
+  const customSuggestionText = {
+    ...suggestionText,
+    fontSize: '1.375rem', // Match input size exactly
+    fontFamily: 'var(--font-heading)',
+  };
+  
   // Render different content based on current step
   const renderStepContent = () => {
     switch (currentStep) {
@@ -335,10 +350,11 @@ const TeamSelectionPage: React.FC = () => {
                 ref={inputRef}
                 type="text"
                 style={{
-                  ...inputBase,
-                  borderRight: 'none',
-                  paddingRight: '15%',
-                  ...(document.activeElement === inputRef?.current ? inputFocus : {}),
+                  ...customSearchInput,
+                  ...(document.activeElement === inputRef?.current ? {
+                    borderColor: 'var(--color-primary)',
+                    boxShadow: '0 0 0 3px rgba(94, 43, 255, 0.1)'
+                  } : {}),
                   ...(selectedTeam ? {
                     borderColor: 'var(--color-primary)',
                     boxShadow: '0 0 0 3px rgba(94, 43, 255, 0.1)'
@@ -363,7 +379,7 @@ const TeamSelectionPage: React.FC = () => {
                 }}
               />
               {suggestedText && search && (
-                <div style={suggestionText}>
+                <div style={customSuggestionText}>
                   <span>{search}</span>
                   <span style={suggestionSpan}>
                     {suggestedText.substring(search.length)}
@@ -373,13 +389,11 @@ const TeamSelectionPage: React.FC = () => {
               <button
                 onClick={handleTeamSelect}
                 disabled={!selectedTeam}
-                style={
-                  !selectedTeam 
-                    ? buttonDisabled
-                    : arrowBtnHover 
-                      ? { ...primaryButton, ...primaryButtonHover, borderRadius: '0 0.5rem 0.5rem 0', position: 'absolute', right: 0, top: 0, width: '15%', height: '100%', zIndex: 10 }
-                      : { ...primaryButton, borderRadius: '0 0.5rem 0.5rem 0', position: 'absolute', right: 0, top: 0, width: '15%', height: '100%', zIndex: 10 }
-                }
+                style={selectedTeam ? 
+                  (arrowBtnHover ? 
+                    { ...arrowButton, background: 'var(--color-primary)', ...primaryButtonHover } : 
+                    arrowButton) : 
+                  arrowButtonDisabled}
                 onMouseEnter={() => setArrowBtnHover(true)}
                 onMouseLeave={() => setArrowBtnHover(false)}
               >
