@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   rightNavigation,
   rightNavigationHover,
@@ -26,6 +26,19 @@ const Navigation: React.FC<NavigationProps> = ({
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   // Track whether the entire navigation area is hovered
   const [navHovered, setNavHovered] = useState<boolean>(false);
+
+  // Determine current path to decide active state for Manage link
+  const location = useLocation();
+  const managePaths = [
+    '/manage',
+    '/onboard',
+    '/categories',
+    '/questions',
+    '/bulk-upload',
+  ];
+  const isManageActiveGlobal = managePaths.some((p) =>
+    location.pathname.startsWith(p)
+  );
 
   // Navigation items configuration
   const navItems = [
@@ -74,12 +87,19 @@ const Navigation: React.FC<NavigationProps> = ({
               onMouseLeave={() => setHoveredLink(null)}
               /* Allow navigation; ManagePage will request pass-code if needed */
             >
-              {({ isActive }) => (
+              {/* Determine active status:
+                  - Estimate uses router's isActive
+                  - Manage uses global path check */}
+              {({ isActive }) => {
+                const active =
+                  item.id === 'manage' ? isManageActiveGlobal : isActive;
+                return (
                 <>
-                  {isActive && <span style={bulletStyle}>•</span>}
+                  {active && <span style={bulletStyle}>•</span>}
                   {item.label}
                 </>
-              )}
+              );
+              }}
               </NavLink>
             </li>
 
