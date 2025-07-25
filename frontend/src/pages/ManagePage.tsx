@@ -49,19 +49,19 @@ const ManagePage: React.FC = () => {
   ];
   
   // Card container using flexbox for even distribution
+  // Card container: 2-column CSS Grid (two cards on top row, two on bottom)
   const cardGrid = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    width: '100%',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)', // exactly 2 columns
     gap: '1.5rem',
+    width: '100%',
   };
   
   // Enhanced card styles with fixed width for even distribution
   const cardStyle = {
     ...cardBase,
     padding: '1.5rem',
-    width: 'calc(50% - 1rem)', // Two cards per row with spacing
+    // Width now controlled by grid; let it fill the grid cell
     display: 'flex',
     flexDirection: 'column' as const,
     transition: 'all 0.2s ease',
