@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { getApiUrl } from '../config/api';
 
 /* ------------------------------------------------------------------
  * Styles
@@ -45,7 +46,7 @@ const OnboardTenant: React.FC = () => {
     }
     try {
       setIsSubmitting(true);
-      await axios.post('http://localhost:4000/tenants', { name: teamName.trim() });
+      await axios.post(getApiUrl('tenants'), { name: teamName.trim() });
       setSuccess(`Team '${teamName.trim()}' onboarded successfully!`);
       setTeamName('');
     } catch (err) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { getApiUrl } from '../config/api';
 import { containerHeader, containerContent } from '../App.styles';
 import TwoColumnLayout from '../components/TwoColumnLayout';
 import {
@@ -115,7 +116,7 @@ const Questions: React.FC = () => {
   // Fetch team suggestions based on search
   useEffect(() => {
     if (teamSearch.length > 1) {
-      axios.get(`http://localhost:4000/tenants?search=${teamSearch}`)
+      axios.get(getApiUrl(`tenants?search=${teamSearch}`))
         .then(res => {
           setTeamSuggestions(res.data);
         })
@@ -132,7 +133,7 @@ const Questions: React.FC = () => {
   useEffect(() => {
     if (selectedTeam) {
       setLoading(true);
-      axios.get(`http://localhost:4000/categories?tenantId=${selectedTeam.id}`)
+      axios.get(getApiUrl(`categories?tenantId=${selectedTeam.id}`))
         .then(res => {
           setCategories(res.data);
           setLoading(false);
@@ -149,7 +150,7 @@ const Questions: React.FC = () => {
   useEffect(() => {
     if (selectedCategory) {
       setLoading(true);
-      axios.get(`http://localhost:4000/questions?categoryId=${selectedCategory.id}`)
+      axios.get(getApiUrl(`questions?categoryId=${selectedCategory.id}`))
         .then(res => {
           setQuestions(res.data);
           setLoading(false);
@@ -292,7 +293,7 @@ const Questions: React.FC = () => {
     
     try {
       setLoading(true);
-      const res = await axios.put(`http://localhost:4000/questions/${editingQuestionId}`, {
+      const res = await axios.put(getApiUrl(`questions/${editingQuestionId}`), {
         text: editQuestionText.trim(),
         options: editOptions,
         categoryId: selectedCategory.id
@@ -332,7 +333,7 @@ const Questions: React.FC = () => {
     
     try {
       setLoading(true);
-      const res = await axios.post('http://localhost:4000/questions', {
+      const res = await axios.post(getApiUrl('questions'), {
         text: newQuestionText.trim(),
         options: newOptions,
         categoryId: selectedCategory.id
@@ -356,7 +357,7 @@ const Questions: React.FC = () => {
     if (window.confirm('Are you sure you want to delete this question?')) {
       try {
         setLoading(true);
-        await axios.delete(`http://localhost:4000/questions/${questionId}`);
+        await axios.delete(getApiUrl(`questions/${questionId}`));
         
         // Update the questions list
         setQuestions(questions.filter(q => q.id !== questionId));

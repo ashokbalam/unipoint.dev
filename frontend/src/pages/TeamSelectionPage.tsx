@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { getApiUrl } from '../config/api';
 import {
   searchContainer,
   suggestionText,
@@ -231,7 +232,7 @@ const TeamSelectionPage: React.FC = () => {
     // Debounce the search
     const debounceTimer = setTimeout(() => {
       setLoading(true);
-      axios.get(`http://localhost:4000/tenants?search=${search}`)
+      axios.get(getApiUrl(`tenants?search=${search}`))
         .then(res => {
           setSuggestions(res.data);
           setLoading(false);
@@ -263,7 +264,7 @@ const TeamSelectionPage: React.FC = () => {
     if (currentStep === 'category' && selectedTeam) {
       setLoading(true);
       setError(''); // Clear any previous errors
-      axios.get(`http://localhost:4000/categories?tenantId=${selectedTeam.id}`)
+      axios.get(getApiUrl(`categories?tenantId=${selectedTeam.id}`))
         .then(res => {
           setCategories(res.data);
           setLoading(false);
@@ -292,7 +293,7 @@ const TeamSelectionPage: React.FC = () => {
       setLoading(true);
       setError(''); // Clear any previous errors
       
-      axios.get(`http://localhost:4000/questions?categoryId=${selectedCategory.id}`)
+      axios.get(getApiUrl(`questions?categoryId=${selectedCategory.id}`))
         .then(res => {
           setQuestions(res.data);
           setQuestionsLoaded(selectedCategory.id); // Mark these questions as loaded

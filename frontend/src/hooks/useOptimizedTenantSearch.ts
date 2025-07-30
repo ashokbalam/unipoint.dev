@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import axios, { AxiosError } from 'axios';
+import { getApiUrl } from '../config/api';
 
 // Types for the hook
 interface Tenant {
@@ -71,9 +72,12 @@ const useOptimizedTenantSearch = (options: SearchOptions = {}) => {
     debounceMax = 500, // Slower debounce for longer queries
     cacheTime = 5 * 60 * 1000, // 5 minutes cache
     maxRetries = 2,
-    apiUrl = 'http://localhost:4000/tenants',
+    apiUrl,
     limit = 10,
   } = options;
+
+  // Resolve final API base URL (prop value takes precedence over env config helper)
+  const resolvedApiUrl = apiUrl || getApiUrl('tenants');
 
   // State management
   const [state, setState] = useState<SearchState>({
@@ -221,7 +225,7 @@ const useOptimizedTenantSearch = (options: SearchOptions = {}) => {
 
     try {
       // Make the API request
-      const response = await axios.get<SearchResult>(apiUrl, {
+      const response = await axios.get<SearchResult>(resolvedApiUrl, {
         params: {
           search: query,
           mode: searchMode,

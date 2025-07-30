@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import TwoColumnLayout from './TwoColumnLayout';
+import { getApiUrl } from '../config/api';
 
 // Types for the component
 interface BulkUploadProps {
@@ -441,8 +442,10 @@ const styles = {
 const BulkUploadSimple: React.FC<BulkUploadProps> = ({ 
   tenantId, 
   onComplete,
-  apiUrl = 'http://localhost:4000'
+  apiUrl
 }) => {
+  // Resolve base API URL – preference: prop > env config helper
+  const baseUrl = apiUrl ?? getApiUrl('');
   // File upload state
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -723,8 +726,8 @@ const BulkUploadSimple: React.FC<BulkUploadProps> = ({
 
   // Download template
   const handleDownloadTemplate = useCallback((format: 'csv' | 'json') => {
-    window.location.href = `${apiUrl}/bulk-upload/template?format=${format}`;
-  }, [apiUrl]);
+    window.location.href = `${baseUrl}/bulk-upload/template?format=${format}`;
+  }, [baseUrl]);
 
   // Submit upload
   const handleSubmit = useCallback(async () => {
@@ -764,7 +767,7 @@ const BulkUploadSimple: React.FC<BulkUploadProps> = ({
       formData.append('dryRun', uploadOptions.dryRun.toString());
       
       const response = await axios.post(
-        `${apiUrl}/tenants/${tenantId}/bulk-upload`,
+        `${baseUrl}/tenants/${tenantId}/bulk-upload`,
         formData,
         {
           headers: {

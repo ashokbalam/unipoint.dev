@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { containerHeader, containerContent } from '../App.styles';
 import TwoColumnLayout from '../components/TwoColumnLayout';
+import { getApiUrl } from '../config/api';
 
 // Interfaces
 interface Team {
@@ -75,7 +76,7 @@ const Categories: React.FC = () => {
     
     const debounceTimer = setTimeout(() => {
       setLoading(true);
-      axios.get(`http://localhost:4000/tenants?search=${teamSearch}`)
+      axios.get(getApiUrl(`tenants?search=${teamSearch}`))
         .then(res => {
           setTeamSuggestions(res.data);
           setError('');
@@ -95,7 +96,7 @@ const Categories: React.FC = () => {
     if (!selectedTeam) return;
     
     setLoading(true);
-    axios.get(`http://localhost:4000/categories?tenantId=${selectedTeam.id}`)
+    axios.get(getApiUrl(`categories?tenantId=${selectedTeam.id}`))
       .then(res => {
         setCategories(res.data);
         setError('');
@@ -208,7 +209,7 @@ const Categories: React.FC = () => {
     
     try {
       setLoading(true);
-      const res = await axios.put(`http://localhost:4000/categories/${editingCategoryId}`, {
+      const res = await axios.put(getApiUrl(`categories/${editingCategoryId}`), {
         name: editCategoryName.trim(),
         rubric: editRubric,
       });
@@ -260,7 +261,7 @@ const Categories: React.FC = () => {
     
     try {
       setLoading(true);
-      const res = await axios.post('http://localhost:4000/categories', {
+      const res = await axios.post(getApiUrl('categories'), {
         name: newCategoryName.trim(),
         tenantId: selectedTeam.id,
         rubric: showRubricBuilder ? rubric : [],

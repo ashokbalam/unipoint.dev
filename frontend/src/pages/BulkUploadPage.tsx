@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BulkUploadSimple from '../components/BulkUploadSimple';
 import TwoColumnLayout from '../components/TwoColumnLayout';
+import { getApiUrl } from '../config/api';
 import {
   containerHeader,
   containerContent,
@@ -127,7 +128,7 @@ const BulkUploadPage: React.FC = () => {
     const fetchTenants = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:4000/tenants');
+        const response = await axios.get(getApiUrl('tenants'));
         setTenants(response.data);
         setLoading(false);
       } catch (err) {
@@ -226,7 +227,7 @@ const BulkUploadPage: React.FC = () => {
             <BulkUploadSimple 
               tenantId={selectedTenant.id}
               onComplete={handleUploadComplete}
-              apiUrl="http://localhost:4000"
+              apiUrl={getApiUrl('')}
             />
           ) : (
             <div style={styles.noAccessMessage}>
