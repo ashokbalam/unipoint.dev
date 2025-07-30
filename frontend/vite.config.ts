@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ command }) => {
   /**
    * Vite only uses the `server` field while running in dev (`vite dev`).
    * It is ignored during the build/preview steps, so having this proxy
@@ -27,7 +27,7 @@ export default defineConfig(({ command, mode }) => {
                * Remove the `/api` prefix when forwarding to the backend.
                * Example:  /api/tenants  ->  http://localhost:4000/tenants
                */
-              rewrite: (path) => path.replace(/^\/api/, ''),
+              rewrite: (path: string) => path.replace(/^\/api/, ''),
             },
           },
         }
