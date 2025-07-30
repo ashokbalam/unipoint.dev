@@ -116,9 +116,11 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     <div style={pageWrapper}>
       <div style={outerCenterStyle}>
         <div style={responsiveContainerStyle}>
+          {/* Title column */}
           <div style={responsiveTitleColumnStyle}>
             {typeof title === 'string' ? <h1 style={titleStyle}>{title}</h1> : title}
           </div>
+          {/* Content column */}
           <div style={responsiveContentColumnStyle}>
             {children}
           </div>

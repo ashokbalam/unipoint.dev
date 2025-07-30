@@ -778,13 +778,14 @@ const TeamSelectionPage: React.FC = () => {
         <div style={pageContainer}>
           {renderStepContent()}
           {error && (
-            <div style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}>
+            <div
+              style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}
+            >
               {error}
             </div>
           )}
         </div>
       ) : (
-        /* Use shared TwoColumnLayout for the remaining steps */
         <TwoColumnLayout
           title={
             currentStep === 'category'
@@ -797,7 +798,13 @@ const TeamSelectionPage: React.FC = () => {
           <>
             {renderStepContent()}
             {error && (
-              <div style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}>
+              <div
+                style={{
+                  color: '#ef4444',
+                  marginTop: '1rem',
+                  textAlign: 'center',
+                }}
+              >
                 {error}
               </div>
             )}
