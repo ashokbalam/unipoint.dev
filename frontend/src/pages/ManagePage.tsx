@@ -59,12 +59,34 @@ const ManagePage: React.FC = () => {
   ];
   
   // Card container using flexbox for even distribution
+  // Wrapper flex styles will now vertically + horizontally centre the grid,
+  // so cardGrid no longer needs its own auto-margin centring.
   // Card container: 2-column CSS Grid (two cards on top row, two on bottom)
   const cardGrid = {
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)', // exactly 2 columns
-    gap: '1.5rem',
-    width: '100%',
+    /* Bigger gap for clearer visual separation */
+    gap: '2rem',
+    /* Keep grid compact so parent container shows clear margins */
+    maxWidth: '700px',
+    /* Extra padding so the grid never touches the white box edges */
+    padding: '1rem 0',
+    /* Make each cell stretch and use all available height */
+    gridAutoRows: '1fr',
+    /* Center the grid inside the white container */
+    placeItems: 'stretch',
+    /* Align the overall 2×2 grid block in the middle of its parent */
+    justifyContent: 'center',
+  };
+
+  // Parent container of the grid: centre its children both vertically & horizontally
+  const containerCentered = {
+    ...containerContent,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
   };
   
   // Enhanced card styles with fixed width for even distribution
@@ -72,19 +94,33 @@ const ManagePage: React.FC = () => {
     ...cardBase,
     padding: '1.5rem',
     // Width now controlled by grid; let it fill the grid cell
+    /* -----------------------------------------------------------
+     * Explicit border + borderColor so the element’s dimensions
+     * never change between normal and hover states.  Matches
+     * non-hover border used for category cards (#e5e7eb).
+     * --------------------------------------------------------- */
+    border: '1px solid #e5e7eb',
+    borderColor: '#e5e7eb',
     display: 'flex',
     flexDirection: 'column' as const,
-    transition: 'all 0.2s ease',
+    /* Only animate the properties that actually change on hover
+       to avoid any subtle re-painting or font-shift effects. */
+    transition: 'background-color 0.2s ease, border-color 0.2s ease',
   };
   
+  /* -------------------------------------------------
+   * Hover style – matches category selection cards
+   * Light-purple background with primary-colour border
+   * ------------------------------------------------- */
   const cardHoverStyle = {
     ...cardHover,
-    transform: 'translateY(-4px)',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    backgroundColor: '#faf5ff',          // light purple background
+    borderColor: 'var(--color-primary)', // primary brand colour border
   };
   
   const cardTitle = {
-    fontSize: '1.25rem',
+    /* Enlarged for better prominence */
+    fontSize: '1.75rem',
     fontWeight: 600,
     color: 'var(--color-text)',
     marginBottom: '0.75rem',
@@ -165,9 +201,10 @@ const ManagePage: React.FC = () => {
             </button>
           </form>
         ) : (
-        <div style={cardGrid}>
-          {managementCards.map((card) => (
-            <div
+        <div style={containerCentered}>
+          <div style={cardGrid}>
+            {managementCards.map((card) => (
+              <div
               key={card.id}
               style={
                 hoveredCard === card.id
@@ -189,8 +226,9 @@ const ManagePage: React.FC = () => {
             >
               <div style={cardTitle}>{card.title}</div>
               <div style={cardDescription}>{card.description}</div>
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
         )}
       </div>

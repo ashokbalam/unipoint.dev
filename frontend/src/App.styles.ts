@@ -84,7 +84,7 @@ export const contentWrapper = {
 export const rightNavigation = {
   position: 'fixed' as const,
   top: '50%',
-  right: '1.25rem', // ~20px
+  right: '2rem', // increased padding from right edge (~32px)
   /* base: centred vertically, no extra scale */
   transform: 'translateY(-50%) scale(1)',
   transformOrigin: 'center',
@@ -119,7 +119,7 @@ export const navigationItem = {
 export const navigationLink = {
   textDecoration: 'none',
   /* slightly larger for better prominence */
-  fontSize: '1.375rem',             // 22px
+  fontSize: '1.75rem',              // 28px (matches card titles)
   fontWeight: 600,
   letterSpacing: '0.05em',
   /* Default to secondary (orange) so links are orange even before hover */

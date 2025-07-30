@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import PageTransition from './components/PageTransition';
 import OnboardTenant from './pages/OnboardTenant';
 import Categories from './pages/Categories';
 import Questions from './pages/Questions';
@@ -12,7 +13,6 @@ import Navigation from './components/Navigation';
 import {
   appContainer,
   mainContent,
-  contentWrapper,
 } from './App.styles';
 
 // Helper wrappers for state-based routing
@@ -48,34 +48,49 @@ function App() {
   return (
     <div style={appContainer}>
       <Router>
+        {/* ------------------------------------------------------------
+         * Top-level Navigation (always visible)
+         * ---------------------------------------------------------- */}
         {/* New Navigation Component */}
         <Navigation
           isGodModeEnabled={isGodModeEnabled}
           toggleGodMode={toggleGodMode}
         />
+        {/* ------------------------------------------------------------
+         * Main Content Area
+         * ---------------------------------------------------------- */}
         {/* Main Content */}
         <main style={mainContent}>
-          <div style={contentWrapper}>
-            <Routes>
-              <Route path="/onboard" element={<OnboardTenant />} />
-              <Route path="/categories" element={<CategoriesWithState />} />
-              <Route path="/questions" element={<QuestionsWithState />} />
-              <Route
-                path="/bulk-upload"
-                element={<BulkUploadPage />}
-              />
-              {/* Consolidated admin dashboard */}
-              <Route path="/manage" element={<ManagePage />} />
-              <Route path="/questionnaire/:teamId" element={<AnswerQuestionnaire />} />
-              <Route path="/" element={<TeamSelectionPage />} />
-              <Route path="*" element={<TeamSelectionPage />} />
-            </Routes>
-          </div>
+          {/* Page / Route transitions */}
+          <RoutesWithTransitions />
         </main>
         <Footer />
       </Router>
     </div>
   );
 }
+/* ------------------------------------------------------------------
+ * RoutesWithTransitions
+ *  - Separate component so hooks stay inside <Router>
+ *  - Handles smooth animated transitions between pages
+ * ----------------------------------------------------------------- */
+function RoutesWithTransitions() {
+  return (
+    <PageTransition type="perspective" transition="smooth">
+      <Routes>
+        <Route path="/onboard" element={<OnboardTenant />} />
+        <Route path="/categories" element={<CategoriesWithState />} />
+        <Route path="/questions" element={<QuestionsWithState />} />
+        <Route path="/bulk-upload" element={<BulkUploadPage />} />
+        {/* Consolidated admin dashboard */}
+        <Route path="/manage" element={<ManagePage />} />
+        <Route path="/questionnaire/:teamId" element={<AnswerQuestionnaire />} />
+        <Route path="/" element={<TeamSelectionPage />} />
+        <Route path="*" element={<TeamSelectionPage />} />
+      </Routes>
+    </PageTransition>
+  );
+}
+
 
 export default App;

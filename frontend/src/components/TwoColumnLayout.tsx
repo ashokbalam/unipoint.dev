@@ -1,5 +1,6 @@
 import React, { type ReactNode } from 'react';
 import { pageWrapper } from '../App.styles';
+import { AnimationContainer } from './PageTransition'; // smooth coordinated animations
 
 interface TwoColumnLayoutProps {
   title: ReactNode;
@@ -46,6 +47,8 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   // Title column style
   const titleColumnStyle: React.CSSProperties = {
     width: titleWidth,
+    // Apply the same internal padding as the content column for visual consistency
+    padding: '2rem',
     paddingRight: gap,
     display: 'flex',
     flexDirection: 'column',
@@ -116,12 +119,25 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
     <div style={pageWrapper}>
       <div style={outerCenterStyle}>
         <div style={responsiveContainerStyle}>
-          <div style={responsiveTitleColumnStyle}>
-            {typeof title === 'string' ? <h1 style={titleStyle}>{title}</h1> : title}
-          </div>
-          <div style={responsiveContentColumnStyle}>
-            {children}
-          </div>
+          {/* Title column enters from right first */}
+          <AnimationContainer
+            type="slideRight"
+            transition="smooth"
+          >
+            <div style={responsiveTitleColumnStyle}>
+              {typeof title === 'string' ? <h1 style={titleStyle}>{title}</h1> : title}
+            </div>
+          </AnimationContainer>
+          {/* Content column slides up shortly after for coordinated effect */}
+          <AnimationContainer
+            type="slideUp"
+            transition="smooth"
+            delay={0.1}
+          >
+            <div style={responsiveContentColumnStyle}>
+              {children}
+            </div>
+          </AnimationContainer>
         </div>
       </div>
     </div>

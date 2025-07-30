@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
         position: 'fixed',
         bottom: '1rem',
         right: '1rem',
-        color: '#4B5563',
+        color: 'var(--color-text)',
         fontFamily: 'var(--font-body)',
         fontSize: '0.875rem',
         zIndex: zIndex.footer,
