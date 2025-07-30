@@ -46,6 +46,9 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
   // Title column style
   const titleColumnStyle: React.CSSProperties = {
     width: titleWidth,
+    // Apply the same internal padding as the content column for visual consistency
+    // Uniform inner padding keeps heading block visually balanced with content card
+    padding: '2rem',
     paddingRight: gap,
     display: 'flex',
     flexDirection: 'column',
