@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: unipoint-backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    image: unipoint-backend:${APP_VERSION:-latest}
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=${DB_HOST:-unipoint-db.clg8clb9ersw.us-east-2.rds.amazonaws.com}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USERNAME=${DB_USERNAME:-unipoint_user}
+      - DB_PASSWORD=${DB_PASSWORD:-unipoint_pass}
+      - DB_DATABASE=${DB_DATABASE:-unipoint_db}
+    ports:
+      - '4000:4000'
+    networks:
+      - unipoint-network
+    volumes:
+      - backend-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    security_opt:
+      - no-new-privileges:true
+
+  frontend:
+    container_name: unipoint-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: unipoint-frontend:${APP_VERSION:-latest}
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - '80:80'
+    networks:
+      - unipoint-network
+    volumes:
+      - nginx-logs:/var/log/nginx
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  unipoint-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+
+volumes:
+  backend-logs:
+    driver: local
+  nginx-logs:
+    driver: local
