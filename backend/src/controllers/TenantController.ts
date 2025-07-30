@@ -19,13 +19,39 @@ export class TenantController {
     }
   }
 
-  static async getTenants(_req: Request, res: Response) {
+  static async getTenants(req: Request, res: Response) {
     try {
+      const { search } = req.query;
       const repo = AppDataSource.getRepository(Tenant);
-      const tenants = await repo.find();
+      
+      let tenants;
+      if (search && typeof search === 'string') {
+        tenants = await repo
+          .createQueryBuilder('tenant')
+          .where('LOWER(tenant.name) LIKE LOWER(:search)', { search: `%${search}%` })
+          .take(10) // Limit results for performance
+          .getMany();
+      } else {
+        // Return a limited number of tenants if no search term
+        tenants = await repo.find({ take: 10 });
+      }
+      
       res.json(tenants);
     } catch (err) {
       res.status(500).json({ error: 'Could not fetch tenants', details: err });
+    }
+  }
+
+  static async getTenantById(req: Request, res: Response) {
+    try {
+      const repo = AppDataSource.getRepository(Tenant);
+      const tenant = await repo.findOneBy({ id: req.params.id });
+      if (!tenant) {
+        return res.status(404).json({ error: 'Tenant not found' });
+      }
+      res.json(tenant);
+    } catch (err) {
+      res.status(500).json({ error: 'Could not fetch tenant', details: err });
     }
   }
 } 

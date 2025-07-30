@@ -1,84 +1,125 @@
-import { useState } from 'react';
-import { Box, Button, TextField, Typography, Alert, Card, CardContent } from '@mui/material';
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { actionButtonStyle } from '../styles';
-import { onboardBox, onboardCard, onboardTitle } from './OnboardTenant.styles';
 
-const TenantSchema = Yup.object().shape({
-  name: Yup.string().required('Team name is required'),
-});
+/* ------------------------------------------------------------------
+ * Styles
+ * ----------------------------------------------------------------- */
+import {
+  pageTitle,
+  pageSubtitle,
+  formContainer,
+  formSection,
+  inputGroup,
+  inputLabel,
+  textInput,
+  errorMessage,
+  successMessage,
+  submitButton,
+  submitButtonDisabled,
+} from './OnboardTenant.styles';
+import {
+  pageWrapper,
+  containerContent,
+} from '../App.styles';
+import TwoColumnLayout from '../components/TwoColumnLayout';
 
-interface OnboardTenantProps {
-  godMode: boolean;
-}
+const OnboardTenant: React.FC = () => {
+  const [teamName, setTeamName] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  /* ------------------------------------------------------------------
+   * UI interaction states
+   * ----------------------------------------------------------------- */
+  const [inputFocused, setInputFocused] = useState(false);
+  const [buttonHovered, setButtonHovered] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-export default function OnboardTenant({ godMode }: OnboardTenantProps) {
-  const [success, setSuccess] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  if (!godMode) {
-    return (
-      <Box sx={{ maxWidth: 500, mx: 'auto', mt: 8 }}>
-        <Alert severity="warning">God Mode required to onboard a new team.</Alert>
-      </Box>
-    );
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    if (isSubmitting) return;
+    if (!teamName) {
+      setError('Please fill in a team name.');
+      return;
+    }
+    try {
+      setIsSubmitting(true);
+      await axios.post('http://localhost:4000/tenants', { name: teamName.trim() });
+      setSuccess(`Team '${teamName.trim()}' onboarded successfully!`);
+      setTeamName('');
+    } catch (err) {
+      const axiosError = err as import('axios').AxiosError;
+      if (axiosError.response && axiosError.response.status === 409) {
+        setError('A team with this name already exists.');
+      } else {
+        setError('Failed to onboard team. Please try again.');
+      }
+      console.error('Onboarding error:', err);
+    }
+    setIsSubmitting(false);
+  };
 
   return (
-    <Box sx={onboardBox}>
-      <Typography variant="h4" gutterBottom sx={onboardTitle}>
-        Onboard New Team
-      </Typography>
-      
-      <Card sx={onboardCard}>
-        <CardContent>
-          <Formik
-            initialValues={{ name: '' }}
-            validationSchema={TenantSchema}
-            onSubmit={async (values, { setSubmitting, resetForm }) => {
-              setSuccess(null);
-              setError(null);
-              try {
-                const res = await axios.post('http://localhost:4000/tenants', values);
-                setSuccess(`Team created: ${res.data.name}`);
-                resetForm();
-              } catch (err: any) {
-                setError(err.response?.data?.error || 'Failed to create team');
-              } finally {
-                setSubmitting(false);
-              }
-            }}
-          >
-            {({ isSubmitting, errors, touched }) => (
-              <Form>
-                <Field
-                  as={TextField}
-                  name="name"
-                  label="Team Name"
-                  fullWidth
-                  margin="normal"
-                  error={touched.name && !!errors.name}
-                  helperText={touched.name && errors.name}
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="secondary"
-                  fullWidth
-                  disabled={isSubmitting}
-                  sx={actionButtonStyle}
-                >
-                  Onboard
-                </Button>
-                {success && <Alert severity="success" icon={false} sx={{ mt: 3 }}>{success}</Alert>}
-                {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
-              </Form>
+    <TwoColumnLayout title="Create New Team">
+        {/* Form Card */}
+        <div style={containerContent}>
+        <div style={formContainer}>
+          <form style={formSection} onSubmit={handleSubmit} noValidate>
+          <div style={inputGroup}>
+            <label htmlFor="teamName" style={inputLabel}>
+              Team Name
+            </label>
+            <input
+              id="teamName"
+              type="text"
+              style={{
+                ...textInput,
+                ...(inputFocused
+                  ? {
+                      borderColor: 'var(--color-primary)',
+                      boxShadow: '0 0 0 3px rgba(99,102,241,0.2)',
+                    }
+                  : {}),
+              }}
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+              placeholder="Enter team name"
+              aria-invalid={!!error}
+              aria-describedby="teamName-error"
+            />
+            {error && (
+              <div id="teamName-error" style={errorMessage}>
+                {error}
+              </div>
             )}
-          </Formik>
-        </CardContent>
-      </Card>
-    </Box>
+            {success && <div style={successMessage}>{success}</div>}
+          </div>
+
+          <button
+            type="submit"
+            style={{
+              ...submitButton,
+              ...(isSubmitting || !teamName.trim() ? submitButtonDisabled : {}),
+              ...(buttonHovered && !isSubmitting && teamName.trim()
+                ? { backgroundColor: '#4f46e5', transform: 'translateY(-1px)' }
+                : {}),
+            }}
+            disabled={isSubmitting || !teamName.trim()}
+            aria-disabled={isSubmitting || !teamName.trim()}
+            aria-busy={isSubmitting}
+            onMouseEnter={() => setButtonHovered(true)}
+            onMouseLeave={() => setButtonHovered(false)}
+          >
+            {isSubmitting ? 'Creating…' : 'Create Team'}
+          </button>
+          </form>
+        </div>
+        </div>
+    </TwoColumnLayout>
   );
-} 
+};
+
+export default OnboardTenant; 

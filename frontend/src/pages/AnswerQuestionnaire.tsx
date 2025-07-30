@@ -1,174 +1,79 @@
-import { useEffect, useState } from 'react';
-import { Box, Button, Typography, MenuItem, Select, InputLabel, FormControl, RadioGroup, FormControlLabel, Radio, Alert, Paper, Card, CardContent, IconButton } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Formik, Form } from 'formik';
-import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
-import { cardStyle } from '../styles';
-import { backButtonBox, backButton, submitButton } from './AnswerQuestionnaire.styles';
+import React, { useState } from 'react';
+import {
+  title,
+  thankYou,
+  form as formStyle,
+  label as labelStyle,
+  input as inputStyle,
+  inputFocus,
+  submitButton,
+  submitButtonHover
+} from './AnswerQuestionnaire.styles';
 
-export default function AnswerQuestionnaire() {
-  const { teamId } = useParams();
-  const navigate = useNavigate();
-  const [categories, setCategories] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [categoryRubric, setCategoryRubric] = useState<any[]>([]);
-  const [questions, setQuestions] = useState<any[]>([]);
-  const [result, setResult] = useState<{ total: number; storyPoints: number | string } | null>(null);
+// Common container section styles
+import {
+  containerContent
+} from '../App.styles';
 
-  useEffect(() => {
-    if (teamId) {
-      axios.get(`http://localhost:4000/categories?tenantId=${teamId}`)
-        .then(res => setCategories(res.data));
-    } else {
-      setCategories([]);
-    }
-    setSelectedCategory('');
-    setQuestions([]);
-    setCategoryRubric([]);
-  }, [teamId]);
+// Shared two-column layout
+import TwoColumnLayout from '../components/TwoColumnLayout';
 
-  useEffect(() => {
-    if (selectedCategory) {
-      const cat = categories.find((c: any) => c.id === selectedCategory);
-      setCategoryRubric(cat?.rubric || []);
-      axios.get(`http://localhost:4000/questions?categoryId=${selectedCategory}`)
-        .then(res => setQuestions(res.data));
-    } else {
-      setQuestions([]);
-      setCategoryRubric([]);
-    }
-  }, [selectedCategory, categories]);
+const mockQuestions = [
+  { id: 1, text: 'What is your team’s main goal?' },
+  { id: 2, text: 'How do you measure success?' },
+  { id: 3, text: 'What challenges are you facing?' },
+];
 
-  function getStoryPoints(total: number) {
-    const found = categoryRubric.find(r => total >= r.min && total <= r.max);
-    return found ? found.storyPoints : '?';
-  }
+const AnswerQuestionnaire: React.FC = () => {
+  const [answers, setAnswers] = useState<{ [key: number]: string }>({});
+  const [submitted, setSubmitted] = useState(false);
+  const [submitBtnHover, setSubmitBtnHover] = useState(false);
+  const [inputFocusId, setInputFocusId] = useState<number | null>(null);
+
+  const handleChange = (id: number, value: string) => {
+    setAnswers((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+    // Simulate API call or further processing
+  };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 8 }}>
-      <Box sx={backButtonBox}>
-        <IconButton onClick={() => navigate('/')} sx={backButton}>
-          <ArrowBackIcon />
-          <Typography variant="body1" sx={{ ml: 1 }}>Back to squad selection</Typography>
-        </IconButton>
-      </Box>
-      <Card sx={cardStyle}>
-        <CardContent>
-          <Typography variant="h5" sx={{ mb: 2 }}>Pick a story type to estimate</Typography>
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="category-select-label" sx={{ color: 'secondary.main', '&.Mui-focused': { color: 'secondary.main' } }}>Select Category</InputLabel>
-            <Select
-              labelId="category-select-label"
-              value={selectedCategory}
-              label="Select Category"
-              onChange={e => {
-                setSelectedCategory(e.target.value);
-                setResult(null);
-              }}
-              sx={{
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'secondary.main',
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'secondary.main',
-                },
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'secondary.main',
-                },
-                color: 'secondary.main',
-              }}
-            >
-              {categories.map((cat) => (
-                <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+    <TwoColumnLayout title="Team Questionnaire">
+        <div style={containerContent}>
+          {submitted ? (
+            <div style={thankYou}>Thank you for submitting your answers!</div>
+          ) : (
+            <form onSubmit={handleSubmit} style={formStyle}>
+              {mockQuestions.map((q) => (
+                <div key={q.id}>
+                  <label style={labelStyle}>{q.text}</label>
+                  <input
+                    type="text"
+                    style={inputFocusId === q.id ? { ...inputStyle, ...inputFocus } : inputStyle}
+                    value={answers[q.id] || ''}
+                    onChange={e => handleChange(q.id, e.target.value)}
+                    onFocus={() => setInputFocusId(q.id)}
+                    onBlur={() => setInputFocusId(null)}
+                    placeholder="Your answer"
+                  />
+                </div>
               ))}
-            </Select>
-          </FormControl>
-        </CardContent>
-      </Card>
-      {selectedCategory && questions.length > 0 && (
-        <Card sx={{ mb:2}}>
-          <CardContent>
-            <Formik
-              initialValues={{ answers: Array(questions.length).fill('') }}
-              enableReinitialize
-              onSubmit={(values, { setSubmitting }) => {
-                const total = questions.reduce((sum, q, idx) => {
-                  const selected = q.options.find((opt: any) => opt.label === values.answers[idx]);
-                  return sum + (selected ? Number(selected.points) : 0);
-                }, 0);
-                setResult({ total, storyPoints: getStoryPoints(total) });
-                setSubmitting(false);
-              }}
-            >
-              {({ isSubmitting, values, setFieldValue }) => (
-                <Form>
-                  <Box sx={{ mb: 3 }}>
-                    {questions.map((q: any, idx: number) => (
-                      <Paper key={q.id} sx={{ p: 1, mb: 1, borderRadius: 2 }}>
-                        <Typography variant="h6" gutterBottom sx={{ mb: 2, fontWeight: 600 }}>
-                          {q.text}
-                        </Typography>
-                        <RadioGroup
-                          value={values.answers[idx]}
-                          onChange={e => setFieldValue(`answers[${idx}]`, e.target.value)}
-                        >
-                          {q.options.map((opt: any, i: number) => (
-                            <FormControlLabel
-                              key={i}
-                              value={opt.label}
-                              control={<Radio color="secondary" />}
-                              label={`${opt.label} (${opt.points})`}
-                              sx={{ 
-                                mb: 0.5,
-                                p: 1,
-                                borderRadius: 1,
-                                '&:hover': {
-                                  bgcolor: 'rgba(99, 102, 241, 0.1)'
-                                }
-                              }}
-                            />
-                          ))}
-                        </RadioGroup>
-                      </Paper>
-                    ))}
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Button 
-                      type="submit" 
-                      variant="contained" 
-                      color="secondary" 
-                      disabled={isSubmitting || values.answers.some(a => !a)}
-                      sx={submitButton}
-                    >
-                      Estimate
-                    </Button>
-                  </Box>
-                </Form>
-              )}
-            </Formik>
-          </CardContent>
-        </Card>
-      )}
-      {selectedCategory && questions.length === 0 && (
-        <Card sx={{ mb: 2 }}>
-          <CardContent>
-            <Alert severity="info" sx={{ mt:3}}>No questions found for this category.</Alert>
-          </CardContent>
-        </Card>
-      )}
-      {result && (
-        <Card sx={{ mt:2}}>
-          <CardContent>
-            <Alert severity="success" icon={false} sx={{ fontSize: 18 }}>
-              <Box sx={{ display: 'flex', gap: 4, alignItems: 'center', justifyContent: 'center' }}>
-                <strong>Total Score:</strong> {result.total}
-                <strong>Story Points:</strong> {result.storyPoints}
-              </Box>
-            </Alert>
-          </CardContent>
-        </Card>
-      )}
-    </Box>
+              <button
+                type="submit"
+                style={submitBtnHover ? { ...submitButton, ...submitButtonHover } : submitButton}
+                onMouseEnter={() => setSubmitBtnHover(true)}
+                onMouseLeave={() => setSubmitBtnHover(false)}
+              >
+                Submit Answers
+              </button>
+            </form>
+          )}
+        </div>
+    </TwoColumnLayout>
   );
-} 
+};
+
+export default AnswerQuestionnaire; 

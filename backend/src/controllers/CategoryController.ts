@@ -55,6 +55,20 @@ export class CategoryController {
     }
   }
 
+  static async getCategoryById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const repo = AppDataSource.getRepository(Category);
+      const category = await repo.findOne({ where: { id }, relations: ['tenant'] });
+      if (!category) {
+        return res.status(404).json({ error: 'Category not found' });
+      }
+      res.json(category);
+    } catch (err) {
+      res.status(500).json({ error: 'Could not fetch category', details: err });
+    }
+  }
+
   static async updateCategory(req: Request, res: Response) {
     try {
       const { id } = req.params;

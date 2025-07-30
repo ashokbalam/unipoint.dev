@@ -1,37 +1,37 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  
+  /* Color Palette */
+  --color-background: #FAFAFA; /* Very light gray */
+  --color-primary: #4F48EC;    /* Deep Indigo Blue */
+  --color-secondary: #FF7900;  /* Orange */
+  --color-text: #100E34;       /* Gray 700 */
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--color-primary);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--color-primary);
 }
 
 body {
+  font-family: var(--font-body), sans-serif;
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 h1 {
-  font-size: 3.2em;
+  /* Use rem for absolute consistency across nested contexts */
+  font-size: 5rem;
   line-height: 1.1;
 }
 
@@ -47,11 +47,15 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--color-primary);
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.font-recia {
+  font-family: var(--font-body), sans-serif;
 }
 
 @media (prefers-color-scheme: light) {
