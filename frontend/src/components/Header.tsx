@@ -6,7 +6,6 @@ import {
   fadeMessageText
 } from '../App.styles';
 import { headerSvgWrapper, headerSvg, fadeMessageBelowSvg } from '../pages/TeamSelectionPage.styles';
-import { AnimationContainer } from './PageTransition'; // smooth motion
 
 const fadeMessages = [
   '"let estimation no longer be subjective"',
@@ -34,12 +33,7 @@ const Header: React.FC = () => {
   return (
     <header style={header}>
       {/* Centered SVG + fade message */}
-      {/* Smooth entrance for the entire header content */}
-      <AnimationContainer
-        type="perspective"
-        transition="smooth"
-        style={headerCenteredContent}
-      >
+      <div style={headerCenteredContent}>
         <Link to="/" style={{ textDecoration: 'none', display: 'block' }}>
           <div style={headerSvgWrapper}>
             <svg
@@ -80,18 +74,11 @@ const Header: React.FC = () => {
           </div>
         </Link>
         <div style={fadeMessageBelowSvg}>
-          {/* Smooth fade for the subtitle messages */}
-          <AnimationContainer
-            key={fadeIndex}               /* triggers re-mount on change */
-            type="fade"
-            transition="smooth"
-            duration={1}                  /* 1s fade like before */
-            style={{ ...fadeMessageText, opacity: fade ? 1 : 0 }}
-          >
+          <div style={{ ...fadeMessageText, opacity: fade ? 1 : 0 }}>
             {fadeMessages[fadeIndex]}
-          </AnimationContainer>
+          </div>
         </div>
-      </AnimationContainer>
+      </div>
     </header>
   );
 };

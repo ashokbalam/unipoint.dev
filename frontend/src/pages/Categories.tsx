@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { containerHeader, containerContent } from '../App.styles';
 import TwoColumnLayout from '../components/TwoColumnLayout';
-import { AnimationContainer, AnimatedChild } from '../components/PageTransition';
 
 // Interfaces
 interface Team {
@@ -720,384 +719,361 @@ const Categories: React.FC = () => {
     <TwoColumnLayout title="Categories">
         {/* Header Section with Inline Team Selection */}
         <div style={containerHeader}>
-          <AnimationContainer type="slideUp" transition="smooth">
-            {selectedTeam && (
-              <div style={teamSelectionWrapper}>
-                <div style={selectedTeamContainer}>
-                  <div style={selectedTeamName}>Team: {selectedTeam.name}</div>
-                  <button
-                    style={changeTeamBtnHover ? { ...changeTeamButton, ...changeTeamButtonHover } : changeTeamButton}
-                    onMouseEnter={() => setChangeTeamBtnHover(true)}
-                    onMouseLeave={() => setChangeTeamBtnHover(false)}
-                    onClick={resetTeamSelection}
-                  >
-                    Change
-                  </button>
-                </div>
-                {/* View-mode toggle */}
-                <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
-                  <button
-                    style={
-                      viewMode === 'existing'
-                        ? { ...viewModeBtnActive }
-                        : existingBtnHover
-                        ? { ...viewModeBtn, backgroundColor: 'var(--color-background)' }
-                        : viewModeBtn
-                    }
-                    onMouseEnter={() => setExistingBtnHover(true)}
-                    onMouseLeave={() => setExistingBtnHover(false)}
-                    onClick={() => setViewMode('existing')}
-                  >
-                    View Categories
-                  </button>
-                  <button
-                    style={
-                      viewMode === 'create'
-                        ? { ...viewModeBtnActive }
-                        : createBtnHover
-                        ? { ...viewModeBtn, backgroundColor: 'var(--color-background)' }
-                        : viewModeBtn
-                    }
-                    onMouseEnter={() => setCreateBtnHover(true)}
-                    onMouseLeave={() => setCreateBtnHover(false)}
-                    onClick={() => {
-                      setViewMode('create');
-                      /* reset messages */
-                      setError('');
-                      setSuccess('');
-                    }}
-                  >
-                    Create New
-                  </button>
-                </div>
+          {/* Only show compact team info when a team is already selected */}
+          {selectedTeam && (
+            <div style={teamSelectionWrapper}>
+              <div style={selectedTeamContainer}>
+                <div style={selectedTeamName}>Team: {selectedTeam.name}</div>
+                <button
+                  style={changeTeamBtnHover ? { ...changeTeamButton, ...changeTeamButtonHover } : changeTeamButton}
+                  onMouseEnter={() => setChangeTeamBtnHover(true)}
+                  onMouseLeave={() => setChangeTeamBtnHover(false)}
+                  onClick={resetTeamSelection}
+                >
+                  Change
+                </button>
               </div>
-            )}
-          </AnimationContainer>
+              {/* View-mode toggle */}
+              <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
+                <button
+                  style={
+                    viewMode === 'existing'
+                      ? { ...viewModeBtnActive }
+                      : existingBtnHover
+                      ? { ...viewModeBtn, backgroundColor: 'var(--color-background)' }
+                      : viewModeBtn
+                  }
+                  onMouseEnter={() => setExistingBtnHover(true)}
+                  onMouseLeave={() => setExistingBtnHover(false)}
+                  onClick={() => setViewMode('existing')}
+                >
+                  View Categories
+                </button>
+                <button
+                  style={
+                    viewMode === 'create'
+                      ? { ...viewModeBtnActive }
+                      : createBtnHover
+                      ? { ...viewModeBtn, backgroundColor: 'var(--color-background)' }
+                      : viewModeBtn
+                  }
+                  onMouseEnter={() => setCreateBtnHover(true)}
+                  onMouseLeave={() => setCreateBtnHover(false)}
+                  onClick={() => {
+                    setViewMode('create');
+                    /* reset messages */
+                    setError('');
+                    setSuccess('');
+                  }}
+                >
+                  Create New
+                </button>
+              </div>
+            </div>
+          )}
         </div>
         
         {/* Main Content - Single Column */}
         <div style={containerContent}>
           {selectedTeam ? (
-            <AnimationContainer type="perspective" transition="smooth">
-              <div style={mainContent}>
-                {viewMode === 'existing' && (
-                  <AnimationContainer type="slideUp" transition="smooth">
-                    <div style={columnStyle}>
-                      <h2 style={sectionHeader}>Existing Categories</h2>
-                      <div style={categoryListContainer}>
-                        {loading && categories.length === 0 ? (
-                          <div style={loadingMessage}>Loading categories...</div>
-                        ) : categories.length > 0 ? (
-                          <AnimationContainer type="slideUp" staggerChildren={true} staggerDelay={0.08}>
-                            <div style={categoryList}>
-                              {categories.map((category, index) => (
-                                <AnimatedChild key={category.id} index={index}>
-                                  <div
-                                    style={categoryHover === category.id ? { ...categoryCard, ...categoryCardHover } : categoryCard}
-                                    onMouseEnter={() => setCategoryHover(category.id)}
-                                    onMouseLeave={() => setCategoryHover(null)}
-                                  >
-                                    {/* Edit Mode */}
-                                    {editingCategoryId === category.id ? (
-                                      <AnimationContainer type="perspective" transition="smoothFast">
-                                        <div style={formGroup}>
-                                          <label style={formLabel}>Category Name</label>
+            <div style={mainContent}>
+              {viewMode === 'existing' && (
+                <div style={columnStyle}>
+                <h2 style={sectionHeader}>Existing Categories</h2>
+                <div style={categoryListContainer}>
+                  {loading && categories.length === 0 ? (
+                    <div style={loadingMessage}>Loading categories...</div>
+                  ) : categories.length > 0 ? (
+                    <div style={categoryList}>
+                      {categories.map((category) => (
+                        <div
+                          key={category.id}
+                          style={categoryHover === category.id ? { ...categoryCard, ...categoryCardHover } : categoryCard}
+                          onMouseEnter={() => setCategoryHover(category.id)}
+                          onMouseLeave={() => setCategoryHover(null)}
+                        >
+                          {/* Edit Mode */}
+                          {editingCategoryId === category.id ? (
+                            <>
+                              <div style={formGroup}>
+                                <label style={formLabel}>Category Name</label>
+                                <input
+                                  type="text"
+                                  style={editCategoryNameFocused ? { ...formInput, ...formInputFocus } : formInput}
+                                  value={editCategoryName}
+                                  onChange={(e) => setEditCategoryName(e.target.value)}
+                                  onFocus={() => setEditCategoryNameFocused(true)}
+                                  onBlur={() => setEditCategoryNameFocused(false)}
+                                />
+                              </div>
+
+                                <div style={rubricContainer}>
+                                  <div style={rubricGrid}>
+                                    <div style={rubricHeader}>Min</div>
+                                    <div style={rubricHeader}>Max</div>
+                                    <div style={rubricHeader}>Points</div>
+                                    <div></div>
+                                    
+                                    {editRubric.map((range, index) => (
+                                      <React.Fragment key={index}>
+                                        <div>
                                           <input
-                                            type="text"
-                                            style={editCategoryNameFocused ? { ...formInput, ...formInputFocus } : formInput}
-                                            value={editCategoryName}
-                                            onChange={(e) => setEditCategoryName(e.target.value)}
-                                            onFocus={() => setEditCategoryNameFocused(true)}
-                                            onBlur={() => setEditCategoryNameFocused(false)}
+                                            type="number"
+                                            style={rubricInput}
+                                            value={range.min}
+                                            onChange={(e) => updateEditRubricRange(index, 'min', parseInt(e.target.value) || 0)}
                                           />
                                         </div>
-
-                                        <div style={rubricContainer}>
-                                          <div style={rubricGrid}>
-                                            <div style={rubricHeader}>Min</div>
-                                            <div style={rubricHeader}>Max</div>
-                                            <div style={rubricHeader}>Points</div>
-                                            <div></div>
-                                            
-                                            <AnimationContainer type="slideUp" staggerChildren={true} staggerDelay={0.05}>
-                                              {editRubric.map((range, index) => (
-                                                <AnimatedChild key={index} index={index}>
-                                                  <React.Fragment>
-                                                    <div>
-                                                      <input
-                                                        type="number"
-                                                        style={rubricInput}
-                                                        value={range.min}
-                                                        onChange={(e) => updateEditRubricRange(index, 'min', parseInt(e.target.value) || 0)}
-                                                      />
-                                                    </div>
-                                                    <div>
-                                                      <input
-                                                        type="number"
-                                                        style={rubricInput}
-                                                        value={range.max}
-                                                        onChange={(e) => updateEditRubricRange(index, 'max', parseInt(e.target.value) || 0)}
-                                                      />
-                                                    </div>
-                                                    <div>
-                                                      <input
-                                                        type="number"
-                                                        style={rubricInput}
-                                                        value={range.storyPoints}
-                                                        onChange={(e) => updateEditRubricRange(index, 'storyPoints', parseInt(e.target.value) || 0)}
-                                                      />
-                                                    </div>
-                                                    <div>
-                                                      {editRubric.length > 1 && (
-                                                        <button
-                                                          type="button"
-                                                          style={removeButton}
-                                                          onClick={() => removeEditRubricRange(index)}
-                                                        >
-                                                          ×
-                                                        </button>
-                                                      )}
-                                                    </div>
-                                                  </React.Fragment>
-                                                </AnimatedChild>
-                                              ))}
-                                            </AnimationContainer>
-                                          </div>
-                                          
-                                          <button
-                                            type="button"
-                                            style={addEditRangeBtnHover ? { ...buttonSecondary, ...buttonSecondaryHover } : buttonSecondary}
-                                            onMouseEnter={() => setAddEditRangeBtnHover(true)}
-                                            onMouseLeave={() => setAddEditRangeBtnHover(false)}
-                                            onClick={addEditRubricRange}
-                                          >
-                                            + Add Range
-                                          </button>
+                                        <div>
+                                          <input
+                                            type="number"
+                                            style={rubricInput}
+                                            value={range.max}
+                                            onChange={(e) => updateEditRubricRange(index, 'max', parseInt(e.target.value) || 0)}
+                                          />
                                         </div>
-                                        {/* Feedback messages for this edit form */}
-                                        {error && editingCategoryId === category.id && (
-                                          <div style={errorMessage}>{error}</div>
-                                        )}
-                                        {success && editingCategoryId === category.id && (
-                                          <div style={successMessage}>{success}</div>
-                                        )}
-
-                                        {/* Action buttons */}
-                                        <div style={categoryActions}>
-                                          <button
-                                            type="button"
-                                            style={saveBtnHover ? { ...saveButton, ...saveButtonHover } : saveButton}
-                                            onMouseEnter={() => setSaveBtnHover(true)}
-                                            onMouseLeave={() => setSaveBtnHover(false)}
-                                            onClick={saveEditing}
-                                            disabled={loading}
-                                          >
-                                            {loading ? 'Saving...' : 'Save'}
-                                          </button>
-
-                                          <button
-                                            type="button"
-                                            style={cancelBtnHover ? { ...cancelButton, ...cancelButtonHover } : cancelButton}
-                                            onMouseEnter={() => setCancelBtnHover(true)}
-                                            onMouseLeave={() => setCancelBtnHover(false)}
-                                            onClick={cancelEditing}
-                                          >
-                                            Cancel
-                                          </button>
+                                        <div>
+                                          <input
+                                            type="number"
+                                            style={rubricInput}
+                                            value={range.storyPoints}
+                                            onChange={(e) => updateEditRubricRange(index, 'storyPoints', parseInt(e.target.value) || 0)}
+                                          />
                                         </div>
-                                      </AnimationContainer>
-                                    ) : (
-                                      /* View Mode */
-                                      <>
-                                        <div style={categoryName}>{category.name}</div>
-                                        <div style={categoryRubricInfo}>
-                                          {category.rubric && category.rubric.length > 0
-                                            ? `${category.rubric.length} rubric ranges`
-                                            : 'No rubric defined'}
+                                        <div>
+                                          {editRubric.length > 1 && (
+                                            <button
+                                              type="button"
+                                              style={removeButton}
+                                              onClick={() => removeEditRubricRange(index)}
+                                            >
+                                              ×
+                                            </button>
+                                          )}
                                         </div>
-                                        <div style={categoryActions}>
-                                          <button
-                                            type="button"
-                                            style={editBtnHover === category.id ? { ...editButton, ...editButtonHover } : editButton}
-                                            onMouseEnter={() => setEditBtnHover(category.id)}
-                                            onMouseLeave={() => setEditBtnHover(null)}
-                                            onClick={() => startEditing(category)}
-                                          >
-                                            Edit
-                                          </button>
-                                          {/* Questions button removed */}
-                                        </div>
-                                      </>
-                                    )}
+                                      </React.Fragment>
+                                    ))}
                                   </div>
-                                </AnimatedChild>
-                              ))}
-                            </div>
-                          </AnimationContainer>
-                        ) : (
-                          <div style={emptyState}>
-                            No categories found for this team. Create your first category.
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </AnimationContainer>
-                )}
+                                  
+                                  <button
+                                    type="button"
+                                    style={addEditRangeBtnHover ? { ...buttonSecondary, ...buttonSecondaryHover } : buttonSecondary}
+                                    onMouseEnter={() => setAddEditRangeBtnHover(true)}
+                                    onMouseLeave={() => setAddEditRangeBtnHover(false)}
+                                    onClick={addEditRubricRange}
+                                  >
+                                    + Add Range
+                                  </button>
+                                </div>
+                              {/* Feedback messages for this edit form */}
+                              {error && editingCategoryId === category.id && (
+                                <div style={errorMessage}>{error}</div>
+                              )}
+                              {success && editingCategoryId === category.id && (
+                                <div style={successMessage}>{success}</div>
+                              )}
 
-                {viewMode === 'create' && (
-                  <AnimationContainer type="perspective" transition="smooth">
-                    <div style={columnStyle}>
-                      <h2 style={sectionHeader}>Create New Category</h2>
-                      <div style={formContainer}>
-                        <form onSubmit={handleAddCategory}>
-                          <div style={formGroup}>
-                            <label style={formLabel}>Category Name</label>
-                            <input
-                              type="text"
-                              placeholder="Enter category name"
-                              style={categoryNameFocused ? { ...formInput, ...formInputFocus } : formInput}
-                              value={newCategoryName}
-                              onChange={(e) => setNewCategoryName(e.target.value)}
-                              onFocus={() => setCategoryNameFocused(true)}
-                              onBlur={() => setCategoryNameFocused(false)}
-                            />
-                          </div>
-                          
-                          <div style={rubricContainer}>
-                            <div style={rubricGrid}>
-                              <div style={rubricHeader}>Min</div>
-                              <div style={rubricHeader}>Max</div>
-                              <div style={rubricHeader}>Points</div>
-                              <div></div>
-                              
-                              <AnimationContainer type="slideUp" staggerChildren={true} staggerDelay={0.05}>
-                                {rubric.map((range, index) => (
-                                  <AnimatedChild key={index} index={index}>
-                                    <React.Fragment>
-                                      <div>
-                                        <input
-                                          type="number"
-                                          style={rubricInput}
-                                          value={range.min}
-                                          onChange={(e) => updateRubricRange(index, 'min', parseInt(e.target.value) || 0)}
-                                        />
-                                      </div>
-                                      <div>
-                                        <input
-                                          type="number"
-                                          style={rubricInput}
-                                          value={range.max}
-                                          onChange={(e) => updateRubricRange(index, 'max', parseInt(e.target.value) || 0)}
-                                        />
-                                      </div>
-                                      <div>
-                                        <input
-                                          type="number"
-                                          style={rubricInput}
-                                          value={range.storyPoints}
-                                          onChange={(e) => updateRubricRange(index, 'storyPoints', parseInt(e.target.value) || 0)}
-                                        />
-                                      </div>
-                                      <div>
-                                        {rubric.length > 1 && (
-                                          <button
-                                            type="button"
-                                            style={removeButton}
-                                            onClick={() => removeRubricRange(index)}
-                                          >
-                                            ×
-                                          </button>
-                                        )}
-                                      </div>
-                                    </React.Fragment>
-                                  </AnimatedChild>
-                                ))}
-                              </AnimationContainer>
-                            </div>
-                            
-                            <button
-                              type="button"
-                              style={addRangeBtnHover ? { ...buttonSecondary, ...buttonSecondaryHover } : buttonSecondary}
-                              onMouseEnter={() => setAddRangeBtnHover(true)}
-                              onMouseLeave={() => setAddRangeBtnHover(false)}
-                              onClick={addRubricRange}
-                            >
-                              + Add Range
-                            </button>
-                          </div>
-                          
-                          {error && !editingCategoryId && <div style={errorMessage}>{error}</div>}
-                          {success && !editingCategoryId && <div style={successMessage}>{success}</div>}
-                          
-                          <div style={{ marginTop: '0.75rem' }}>
-                            <button
-                              type="submit"
-                              style={addCategoryBtnHover ? { ...buttonPrimary, ...buttonPrimaryHover } : buttonPrimary}
-                              onMouseEnter={() => setAddCategoryBtnHover(true)}
-                              onMouseLeave={() => setAddCategoryBtnHover(false)}
-                              disabled={loading}
-                            >
-                              {loading && !editingCategoryId ? 'Creating...' : 'Create Category'}
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </AnimationContainer>
-                )}
-              </div>
-            </AnimationContainer>
-          ) : (
-            /* -------- PROMINENT TEAM SELECTION UI (no team selected) ---------- */
-            <AnimationContainer type="perspective" transition="smooth">
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                <h2 style={{ ...sectionHeader, fontSize: '1.25rem', marginBottom: '1rem' }}>
-                  Select a Team to Manage Categories
-                </h2>
-                <div style={{ width: '80%', maxWidth: '400px' }}>
-                  <div style={searchContainer}>
-                    <input
-                      ref={teamSearchInputRef}
-                      type="text"
-                      placeholder="Start typing team name..."
-                      style={{ ...searchInput, fontSize: '1rem' }}
-                      value={teamSearch}
-                      onChange={(e) => setTeamSearch(e.target.value)}
-                      onFocus={() => setTeamSearchFocused(true)}
-                      onBlur={() => setTeamSearchFocused(false)}
-                    />
+                              {/* Action buttons */}
+                              <div style={categoryActions}>
+                                <button
+                                  type="button"
+                                  style={saveBtnHover ? { ...saveButton, ...saveButtonHover } : saveButton}
+                                  onMouseEnter={() => setSaveBtnHover(true)}
+                                  onMouseLeave={() => setSaveBtnHover(false)}
+                                  onClick={saveEditing}
+                                  disabled={loading}
+                                >
+                                  {loading ? 'Saving...' : 'Save'}
+                                </button>
 
-                    {teamSuggestions.length > 0 && (
-                      <AnimationContainer type="slideUp" staggerChildren={true} staggerDelay={0.05}>
-                        <div style={suggestionsList}>
-                          {teamSuggestions.map((team, index) => (
-                            <AnimatedChild key={team.id} index={index}>
-                              <div
-                                style={{
-                                  ...suggestionItem,
-                                  ...(teamSearch.toLowerCase() === team.name.toLowerCase() ? suggestionItemHover : {})
-                                }}
-                                onMouseDown={() => handleTeamSelect(team)}
-                              >
-                                {team.name}
+                                <button
+                                  type="button"
+                                  style={cancelBtnHover ? { ...cancelButton, ...cancelButtonHover } : cancelButton}
+                                  onMouseEnter={() => setCancelBtnHover(true)}
+                                  onMouseLeave={() => setCancelBtnHover(false)}
+                                  onClick={cancelEditing}
+                                >
+                                  Cancel
+                                </button>
                               </div>
-                            </AnimatedChild>
-                          ))}
+                            </>
+                          ) : (
+                            /* View Mode */
+                            <>
+                              <div style={categoryName}>{category.name}</div>
+                              <div style={categoryRubricInfo}>
+                                {category.rubric && category.rubric.length > 0
+                                  ? `${category.rubric.length} rubric ranges`
+                                  : 'No rubric defined'}
+                              </div>
+                              <div style={categoryActions}>
+                                <button
+                                  type="button"
+                                  style={editBtnHover === category.id ? { ...editButton, ...editButtonHover } : editButton}
+                                  onMouseEnter={() => setEditBtnHover(category.id)}
+                                  onMouseLeave={() => setEditBtnHover(null)}
+                                  onClick={() => startEditing(category)}
+                                >
+                                  Edit
+                                </button>
+                                {/* Questions button removed */}
+                              </div>
+                            </>
+                          )}
                         </div>
-                      </AnimationContainer>
-                    )}
-
-                    {loading && teamSuggestions.length === 0 && (
-                      <div style={{ ...loadingMessage, textAlign: 'center' }}>Searching...</div>
-                    )}
-
-                    {teamSearch && !loading && teamSuggestions.length === 0 && (
-                      <div style={{ ...errorMessage, textAlign: 'center' }}>No teams found</div>
-                    )}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={emptyState}>
+                      No categories found for this team. Create your first category.
+                    </div>
+                  )}
                 </div>
               </div>
-            </AnimationContainer>
+              )}
+
+              {viewMode === 'create' && (
+                <div style={columnStyle}>
+                <h2 style={sectionHeader}>Create New Category</h2>
+                <div style={formContainer}>
+                  <form onSubmit={handleAddCategory}>
+                    <div style={formGroup}>
+                      <label style={formLabel}>Category Name</label>
+                      <input
+                        type="text"
+                        placeholder="Enter category name"
+                        style={categoryNameFocused ? { ...formInput, ...formInputFocus } : formInput}
+                        value={newCategoryName}
+                        onChange={(e) => setNewCategoryName(e.target.value)}
+                        onFocus={() => setCategoryNameFocused(true)}
+                        onBlur={() => setCategoryNameFocused(false)}
+                      />
+                    </div>
+                    
+                    <div style={rubricContainer}>
+                      <div style={rubricGrid}>
+                        <div style={rubricHeader}>Min</div>
+                        <div style={rubricHeader}>Max</div>
+                        <div style={rubricHeader}>Points</div>
+                        <div></div>
+                        
+                        {rubric.map((range, index) => (
+                          <React.Fragment key={index}>
+                            <div>
+                              <input
+                                type="number"
+                                style={rubricInput}
+                                value={range.min}
+                                onChange={(e) => updateRubricRange(index, 'min', parseInt(e.target.value) || 0)}
+                              />
+                            </div>
+                            <div>
+                              <input
+                                type="number"
+                                style={rubricInput}
+                                value={range.max}
+                                onChange={(e) => updateRubricRange(index, 'max', parseInt(e.target.value) || 0)}
+                              />
+                            </div>
+                            <div>
+                              <input
+                                type="number"
+                                style={rubricInput}
+                                value={range.storyPoints}
+                                onChange={(e) => updateRubricRange(index, 'storyPoints', parseInt(e.target.value) || 0)}
+                              />
+                            </div>
+                            <div>
+                              {rubric.length > 1 && (
+                                <button
+                                  type="button"
+                                  style={removeButton}
+                                  onClick={() => removeRubricRange(index)}
+                                >
+                                  ×
+                                </button>
+                              )}
+                            </div>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                      
+                      <button
+                        type="button"
+                        style={addRangeBtnHover ? { ...buttonSecondary, ...buttonSecondaryHover } : buttonSecondary}
+                        onMouseEnter={() => setAddRangeBtnHover(true)}
+                        onMouseLeave={() => setAddRangeBtnHover(false)}
+                        onClick={addRubricRange}
+                      >
+                        + Add Range
+                      </button>
+                    </div>
+                    
+                    {error && !editingCategoryId && <div style={errorMessage}>{error}</div>}
+                    {success && !editingCategoryId && <div style={successMessage}>{success}</div>}
+                    
+                    <div style={{ marginTop: '0.75rem' }}>
+                      <button
+                        type="submit"
+                        style={addCategoryBtnHover ? { ...buttonPrimary, ...buttonPrimaryHover } : buttonPrimary}
+                        onMouseEnter={() => setAddCategoryBtnHover(true)}
+                        onMouseLeave={() => setAddCategoryBtnHover(false)}
+                        disabled={loading}
+                      >
+                        {loading && !editingCategoryId ? 'Creating...' : 'Create Category'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* -------- PROMINENT TEAM SELECTION UI (no team selected) ---------- */
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+              <h2 style={{ ...sectionHeader, fontSize: '1.25rem', marginBottom: '1rem' }}>
+                Select a Team to Manage Categories
+              </h2>
+              <div style={{ width: '80%', maxWidth: '400px' }}>
+                <div style={searchContainer}>
+                  <input
+                    ref={teamSearchInputRef}
+                    type="text"
+                    placeholder="Start typing team name..."
+                    style={{ ...searchInput, fontSize: '1rem' }}
+                    value={teamSearch}
+                    onChange={(e) => setTeamSearch(e.target.value)}
+                    onFocus={() => setTeamSearchFocused(true)}
+                    onBlur={() => setTeamSearchFocused(false)}
+                  />
+
+                  {teamSuggestions.length > 0 && (
+                    <div style={suggestionsList}>
+                      {teamSuggestions.map((team) => (
+                        <div
+                          key={team.id}
+                          style={{
+                            ...suggestionItem,
+                            ...(teamSearch.toLowerCase() === team.name.toLowerCase() ? suggestionItemHover : {})
+                          }}
+                          onMouseDown={() => handleTeamSelect(team)}
+                        >
+                          {team.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {loading && teamSuggestions.length === 0 && (
+                    <div style={{ ...loadingMessage, textAlign: 'center' }}>Searching...</div>
+                  )}
+
+                  {teamSearch && !loading && teamSuggestions.length === 0 && (
+                    <div style={{ ...errorMessage, textAlign: 'center' }}>No teams found</div>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
         </div>
     </TwoColumnLayout>

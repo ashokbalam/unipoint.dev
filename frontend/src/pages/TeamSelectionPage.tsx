@@ -12,9 +12,6 @@ import {
   arrowButtonDisabled,
 } from './TeamSelectionPage.styles';
 
-// Import StepTransition components for smooth animations
-import StepTransition, { StepItem } from '../components/StepTransition';
-
 // Import common container styles and design system
 import {
   pageWrapper,
@@ -114,56 +111,6 @@ const LoadingSpinner = () => (
   </div>
 );
 
-/* ------------------------------------------------------------------
- * Global styles used across this page (always present)
- * ------------------------------------------------------------------ */
-const globalRadioStyles = `
-  /* ---------- Custom Radio Button (always available) ---------- */
-  .custom-radio {
-    /* Remove default styling */
-    -webkit-appearance: none;
-    appearance: none;
-    cursor: pointer;
-    width: 1.25rem;          /* Bigger touch-friendly size */
-    height: 1.25rem;
-    border: 2px solid #d1d5db;
-    border-radius: 50%;
-    position: relative;
-    display: inline-grid;
-    place-content: center;
-    transition: border-color 0.2s ease;
-    margin-right: 0.5rem;
-  }
-
-  .custom-radio:hover {
-    border-color: var(--color-primary);
-  }
-
-  .custom-radio:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  /* Checked state – inner circle */
-  .custom-radio::before {
-    content: '';
-    width: 0.55rem;          /* Inner filled circle */
-    height: 0.55rem;
-    border-radius: 50%;
-    transform: scale(0);
-    background: var(--color-primary);
-    transition: transform 0.2s ease;
-  }
-
-  .custom-radio:checked {
-    border-color: var(--color-primary);
-  }
-
-  .custom-radio:checked::before {
-    transform: scale(1);
-  }
-`;
-
 const TeamSelectionPage: React.FC = () => {
   // Navigation
   const navigate = useNavigate();
@@ -171,9 +118,6 @@ const TeamSelectionPage: React.FC = () => {
   
   // Step management
   const [currentStep, setCurrentStep] = useState<Step>('team');
-  // Track previous step for transition direction
-  const [prevStep, setPrevStep] = useState<Step | null>(null);
-  const [transitionDirection, setTransitionDirection] = useState<'forward' | 'backward' | 'none'>('none');
   
   // Team selection state
   const [search, setSearch] = useState('');
@@ -189,8 +133,6 @@ const TeamSelectionPage: React.FC = () => {
   // Question answering state
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<{[questionId: string]: number}>({});
-  // Track if questions are loaded for the current category to prevent duplicate loading
-  const [questionsLoaded, setQuestionsLoaded] = useState<string | null>(null);
   
   // Results state
   const [totalScore, setTotalScore] = useState<number>(0);
@@ -203,18 +145,6 @@ const TeamSelectionPage: React.FC = () => {
   const [submitBtnHover, setSubmitBtnHover] = useState(false);
   // Track whether the search input currently has focus
   const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
-  
-  // Update transition direction when step changes
-  useEffect(() => {
-    if (prevStep !== null && prevStep !== currentStep) {
-      // Determine direction based on step progression
-      const stepOrder = ['team', 'category', 'questions', 'results'];
-      const prevIndex = stepOrder.indexOf(prevStep);
-      const currentIndex = stepOrder.indexOf(currentStep);
-      setTransitionDirection(currentIndex > prevIndex ? 'forward' : 'backward');
-    }
-    setPrevStep(currentStep);
-  }, [currentStep, prevStep]);
   
   /*
    * ------------------------------------------------------------------
@@ -280,7 +210,6 @@ const TeamSelectionPage: React.FC = () => {
   useEffect(() => {
     if (currentStep === 'category' && selectedTeam) {
       setLoading(true);
-      setError(''); // Clear any previous errors
       axios.get(`http://localhost:4000/categories?tenantId=${selectedTeam.id}`)
         .then(res => {
           setCategories(res.data);
@@ -288,44 +217,28 @@ const TeamSelectionPage: React.FC = () => {
         })
         .catch(err => {
           console.error('Error loading categories:', err);
-          // Only set error if we're still on the category step
-          if (currentStep === 'category') {
-            setError('Failed to load categories');
-          }
+          setError('Failed to load categories');
           setLoading(false);
         });
     }
   }, [currentStep, selectedTeam]);
   
-  // Load questions when a category is selected - with improved error handling
+  // Load questions when a category is selected
   useEffect(() => {
-    // Only load questions when:
-    // 1. We're on the questions step
-    // 2. We have a selected category
-    // 3. We haven't already loaded questions for this category
-    if (currentStep === 'questions' && 
-        selectedCategory && 
-        questionsLoaded !== selectedCategory.id) {
-      
+    if (currentStep === 'questions' && selectedCategory) {
       setLoading(true);
-      setError(''); // Clear any previous errors
-      
       axios.get(`http://localhost:4000/questions?categoryId=${selectedCategory.id}`)
         .then(res => {
           setQuestions(res.data);
-          setQuestionsLoaded(selectedCategory.id); // Mark these questions as loaded
           setLoading(false);
         })
         .catch(err => {
           console.error('Error loading questions:', err);
-          // Only set error if we're still on the questions step
-          if (currentStep === 'questions') {
-            setError('Failed to load questions');
-          }
+          setError('Failed to load questions');
           setLoading(false);
         });
     }
-  }, [currentStep, selectedCategory, questionsLoaded]);
+  }, [currentStep, selectedCategory]);
   
   // Auto-suggestion text for team search
   const suggestedText =
@@ -336,7 +249,6 @@ const TeamSelectionPage: React.FC = () => {
   const handleTeamSelect = () => {
     if (selectedTeam) {
       setCurrentStep('category');
-      setError(''); // Clear any errors when changing steps
     }
   };
   
@@ -344,7 +256,6 @@ const TeamSelectionPage: React.FC = () => {
   const handleCategorySelect = (category: Category) => {
     setSelectedCategory(category);
     setCurrentStep('questions');
-    setError(''); // Clear any errors when changing steps
   };
   
   // Handle answer selection
@@ -378,20 +289,16 @@ const TeamSelectionPage: React.FC = () => {
     }
     
     setCurrentStep('results');
-    setError(''); // Clear any errors when changing steps
   };
   
   
   const handleBack = () => {
-    setError(''); // Clear any errors when navigating back
-    
     if (currentStep === 'category') {
       setCurrentStep('team');
       setSelectedCategory(null);
     } else if (currentStep === 'questions') {
       setCurrentStep('category');
-      // Don't clear questions - we might come back to them
-      // But do clear answers if navigating away from questions
+      setQuestions([]);
       setAnswers({});
     } else if (currentStep === 'results') {
       setCurrentStep('questions');
@@ -406,12 +313,10 @@ const TeamSelectionPage: React.FC = () => {
     setSelectedTeam(null);
     setSelectedCategory(null);
     setQuestions([]);
-    setQuestionsLoaded(null); // Reset loaded questions tracking
     setAnswers({});
     setTotalScore(0);
     setStoryPoints(null);
     setSearch('');
-    setError(''); // Clear any errors when resetting
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -444,9 +349,8 @@ const TeamSelectionPage: React.FC = () => {
    * Category Card (consistent border + subtle hover)
    * ------------------------------------------------- */
   const categoryCardBase = {
-    // Consistent light-gray border (explicit borderColor to reset hover)
-    border: '1px solid #e5e7eb',
-    borderColor: '#e5e7eb',
+    // Darker grey for better initial visibility while still subtle
+    border: '1px solid #d1d5db',               // always-visible border
     borderRadius: '0.75rem',
     backgroundColor: '#ffffff',
     padding: '1rem',
@@ -458,9 +362,8 @@ const TeamSelectionPage: React.FC = () => {
   };
 
   const categoryCardHover = {
-    /* Match the light-purple theme used for selected radio buttons */
-    backgroundColor: '#faf5ff',            // very light purple background
-    borderColor: 'var(--color-primary)',   // primary brand colour border
+    backgroundColor: 'rgba(251, 146, 60, 0.08)', // light secondary tint
+    borderColor: 'var(--color-secondary)',       // highlight border
   };
 
   const questionContainer = {
@@ -504,34 +407,22 @@ const TeamSelectionPage: React.FC = () => {
   };
   
   const resultScore = {
-    fontSize: '5rem',                // match page title size
-    fontWeight: 'bold',              // use bold Inter
-    color: 'var(--color-background)',      // text colour inside the box
-    backgroundColor: 'var(--color-secondary)',    // boxed background
-    padding: '2rem',
-    borderRadius: '1rem',
-    display: 'inline-block',
-    minWidth: '8rem',                // keep roughly square
-    fontFamily: 'Inter',
+    fontSize: '3rem',
+    fontWeight: 800,
+    color: 'var(--color-primary)',
     marginBottom: '0.5rem',
   };
   
   const resultLabel = {
     fontSize: '1rem',
-    color: 'var(--color-text)',  // use standard text colour
+    color: '#6b7280',
     marginBottom: '2rem',
   };
   
   const resultStoryPoints = {
-    fontSize: '5rem',                 // match page title size
-    fontWeight: 'bold',               // use bold Inter
-    color: 'var(--color-background)',       // text colour inside the box
-    backgroundColor: 'var(--color-secondary)',    // boxed background
-    padding: '2rem',
-    borderRadius: '1rem',
-    display: 'inline-block',
-    minWidth: '8rem',                 // keep roughly square
-    fontFamily: 'Inter',
+    fontSize: '2rem',
+    fontWeight: 700,
+    color: 'var(--color-secondary)',
     marginBottom: '0.5rem',
   };
   
@@ -548,86 +439,6 @@ const TeamSelectionPage: React.FC = () => {
     fontSize: '1.375rem', // Match input size exactly
     fontFamily: 'var(--font-heading)',
   };
-  
-  // Change Squad link style
-  const changeSquadLink = {
-    ...backButtonBase,
-    marginBottom: '1rem',
-    color: 'var(--color-primary)',
-    fontWeight: 500,
-    outline: 'none', // remove default focus outline
-    border: 'none',  // remove default button border
-  };
-  
-  // Squad info style
-  const squadInfo = {
-    fontSize: '1rem',
-    color: '#6b7280',
-    fontWeight: 500,
-    textAlign: 'left' as const,
-    marginBottom: '1rem', // keep consistent spacing across Category & Questions steps
-  };
-
-  /* -------------------------
-   * Questions page constants
-   * -------------------------*/
-  const backToCategoriesLink = {
-    ...backButtonBase,
-    marginBottom: '1rem',
-    color: 'var(--color-primary)',
-    fontWeight: 500,
-    outline: 'none',
-    border: 'none',
-  };
-
-  /* -------------------------
-   * Results page constants
-   * -------------------------*/
-  // Back to Questions link style (matches other nav links)
-  const backToQuestionsLink = {
-    ...backButtonBase,
-    marginBottom: '1rem',
-    color: 'var(--color-primary)',
-    fontWeight: 500,
-    outline: 'none',
-    border: 'none',
-  };
-
-  // Custom title for Questions step (link + title, right-aligned)
-  const questionsTitleContent = (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-      <button
-        style={backBtnHover ? { ...backToCategoriesLink, ...backButtonHover } : backToCategoriesLink}
-        onClick={handleBack}
-        onMouseEnter={() => setBackBtnHover(true)}
-        onMouseLeave={() => setBackBtnHover(false)}
-      >
-        <svg
-          width="16"
-          height="16"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          style={{ marginRight: '0.25rem' }}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Change Story Type
-      </button>
-      <h1
-        style={{
-          fontSize: '5rem',
-          fontWeight: 700,
-          marginTop: '0.5rem',
-          fontFamily: 'var(--font-heading)',
-          color: 'var(--color-text)',
-          textAlign: 'right',
-        }}
-      >
-        Answer These Questions
-      </h1>
-    </div>
-  );
   
   // Three-column header layout for true centering
   const threeColumnHeader = {
@@ -724,99 +535,80 @@ const TeamSelectionPage: React.FC = () => {
                 </svg>
               </button>
             </div>
-            {/* Improved helper text logic with better conditions */}
+            {/* Conditionally render helper text only when there's content to show */}
             {(() => {
               let helperText = '';
-              // Only show helper text when input is focused to reduce visual clutter
-              if (isInputFocused) {
-                // First check if there's any input
-                if (search.trim()) {
-                  if (loading) {
-                    // Show "searching" when loading and there's input
-                    helperText = 'searching';
-                  } else if (selectedTeam) {
-                    // Show "hit enter to continue" when a team is selected and input is focused
-                    helperText = 'hit enter to continue';
-                  } else if (search.trim().length > 2 && suggestions.length === 0) {
-                    // Show "couldn't find your squad" when search is long enough but no results
-                    helperText = "couldn't find your squad";
-                  } else if (suggestedText && search.trim().length > 0) {
-                    // Show "hit tab to autofill" when there's a suggestion available and input is focused
-                    helperText = 'hit tab to autofill';
-                  } else if (search.trim().length < 3) {
-                    // Show "keep typing" for short searches that aren't long enough yet
-                    helperText = 'keep typing';
-                  }
-                }
+              if (loading) {
+                helperText = 'searching';
+              } else if (selectedTeam && isInputFocused) {
+                helperText = 'hit enter to continue';
+              } else if (search.trim().length > 2 && suggestions.length === 0) {
+                helperText = "couldn't find your squad";
+              } else if (suggestedText) {
+                helperText = 'hit tab to autofill';
               }
               
-                /* -------------------------------------------------
-                 * Always reserve space for helper text to prevent
-                 * layout shifts.  We use a fixed/min height and
-                 * toggle visibility so the content area doesn't
-                 * disappear & re-appear, which was causing the
-                 * input/title to move vertically.
-                 * ------------------------------------------------- */
-                return (
-                  <div
-                    style={{
-                      ...smallText,
-                      marginTop: '0.5rem',
-                      textAlign: 'right',
-                      width: '100%',
-                      minHeight: '1.25rem',            // Reserve space (≈ line-height)
-                      visibility: helperText ? 'visible' : 'hidden',
-                    }}
-                  >
-                    {helperText}
-                  </div>
-                );
+              // Only render the div if there's actually text to display
+              return helperText ? (
+                <div style={{ ...smallText, marginTop: '0.5rem', textAlign: 'right', width: '100%' }}>
+                  {helperText}
+                </div>
+              ) : null;
             })()}
           </div>
         );
         
       case 'category':
         return (
-          <div style={{ width: '100%' }}>
-            {/* Squad info at top right of content area */}
-            {selectedTeam && (
-              <div style={squadInfo}>
-                Squad: {selectedTeam.name}
+          <>
+            {/* Three-column header layout for true centering */}
+            <div style={threeColumnHeader}>
+              {/* Left column: Back button */}
+              <div style={leftColumn}>
+                <button
+                  style={backBtnHover ? { ...backButtonBase, ...backButtonHover } : backButtonBase}
+                  onClick={handleBack}
+                  onMouseEnter={() => setBackBtnHover(true)}
+                  onMouseLeave={() => setBackBtnHover(false)}
+                >
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Change Squad
+                </button>
               </div>
-            )}
+              
+              {/* Center column: Team name */}
+              <div style={centerColumn}>
+                {selectedTeam && (
+                  <div style={{
+                    fontSize: '1rem',
+                    color: '#6b7280',
+                    fontWeight: 500,
+                  }}>
+                    Squad: {selectedTeam.name}
+                  </div>
+                )}
+              </div>
+              
+              {/* Right column: Empty space for balance */}
+              <div style={rightColumn}></div>
+            </div>
             
-            {loading ? (
-              <div
-                /* Center the loading spinner perfectly inside the white box */
-                style={{
-                  /* -----------------------------------------------------
-                   * Make the container tall enough so the spinner can
-                   * truly appear centred inside the white box even before
-                   * the category list renders.  We mimic the height that
-                   * the scrollable questions container uses so that the
-                   * spinner sits visually in the middle of the box.
-                   * --------------------------------------------------- */
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                  width: '100%',
-                  /* 80 vh (box height) − 4 rem (vertical padding)  */
-                  minHeight: 'calc(80vh - 4rem)',
-                }}
-              >
-                <LoadingSpinner />
-              </div>
-            ) : categories.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem' }}>
-                No categories found for this team.
-              </div>
-            ) : (
-              <div>
-                {categories.map((category, index) => (
-                  <StepItem key={category.id} index={index}>
+            <div style={containerContent}>
+              {loading ? (
+                <div style={{ position: 'relative', flex: 1 }}>
+                  <LoadingSpinner />
+                </div>
+              ) : categories.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2rem' }}>
+                  No categories found for this team.
+                </div>
+              ) : (
+                <div>
+                  {categories.map(category => (
                     <div
+                      key={category.id}
                       style={
                         categoryHover === category.id
                           ? { ...categoryCardBase, ...categoryCardHover }
@@ -828,42 +620,51 @@ const TeamSelectionPage: React.FC = () => {
                     >
                       <div style={categoryName}>{category.name}</div>
                     </div>
-                  </StepItem>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
         );
         
       case 'questions':
         return (
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', height: '100%' }}>
-            {/* Squad & Category info aligned horizontally with Change Story Type link */}
-            {selectedTeam && selectedCategory && (
-              <div
-                style={{
-                  ...squadInfo,
-                  /* offset so it lines up with the link in the left column */
-                  marginBottom: '1rem',
-                }}
-              >
-                Squad: {selectedTeam.name} | Category: {selectedCategory.name}
+          <>
+            {/* Three-column header layout for true centering */}
+            <div style={threeColumnHeader}>
+              {/* Left column: Back button */}
+              <div style={leftColumn}>
+                <button
+                  style={backBtnHover ? { ...backButtonBase, ...backButtonHover } : backButtonBase}
+                  onClick={handleBack}
+                  onMouseEnter={() => setBackBtnHover(true)}
+                  onMouseLeave={() => setBackBtnHover(false)}
+                >
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back to Categories
+                </button>
               </div>
-            )}
-
-            {/* Scrollable questions area with fixed height calculation */}
-            <div
-              style={{
-                ...containerContent,
-                display: 'flex',
-                flexDirection: 'column',
-                height: 'calc(80vh - 7rem)', /* 80vh (content box) - 4rem (padding) - 3rem (squad info + margins) */
-                maxHeight: 'calc(80vh - 7rem)',
-                overflowY: 'auto',
-                padding: '0.5rem',
-                /* Removed outer border to keep only individual question borders */
-              }}
-            >
+              
+              {/* Center column: Team and Category info */}
+              <div style={centerColumn}>
+                {selectedTeam && selectedCategory && (
+                  <div style={{
+                    fontSize: '1rem',
+                    color: '#6b7280',
+                    fontWeight: 500,
+                  }}>
+                    Squad: {selectedTeam.name} | Category: {selectedCategory.name}
+                  </div>
+                )}
+              </div>
+              
+              {/* Right column: Empty space for balance */}
+              <div style={rightColumn}></div>
+            </div>
+            
+            <div style={containerContent}>
               {loading ? (
                 <div style={{ position: 'relative', flex: 1 }}>
                   <LoadingSpinner />
@@ -875,247 +676,134 @@ const TeamSelectionPage: React.FC = () => {
               ) : (
                 <div>
                   {questions.map((question, index) => (
-                    <StepItem key={question.id} index={index}>
-                      <div key={question.id} style={questionContainer}>
-                        <div style={questionText}>{index + 1}. {question.text}</div>
-                        {question.options.map((option, optIndex) => (
-                          <StepItem key={option.id} index={optIndex * 0.2}>
-                            <label
-                              style={{
-                                ...optionContainer,
-                                // Highlight the selected option with a light-purple theme
-                                ...(answers[question.id] === option.points
-                                  ? {
-                                      backgroundColor: '#faf5ff', // light purple background
-                                      borderColor: '#8b5cf6',     // purple border
-                                    }
-                                  : {}),
-                              }}
-                            >
-                              <input
-                                type="radio"
-                                name={question.id}
-                                className="custom-radio"
-                                checked={answers[question.id] === option.points}
-                                onChange={() => handleAnswerSelect(question.id, option.points)}
-                              />
-                              <span style={optionLabel}>{option.label}</span>
-                              <span style={optionPoints}>{option.points} points</span>
-                            </label>
-                          </StepItem>
-                        ))}
-                      </div>
-                    </StepItem>
+                    <div key={question.id} style={questionContainer}>
+                      <div style={questionText}>{index + 1}. {question.text}</div>
+                      {question.options.map(option => (
+                        <label
+                          key={option.id}
+                          style={{
+                            ...optionContainer,
+                            ...(answers[question.id] === option.points ? { backgroundColor: '#f0f9ff', borderColor: '#3b82f6' } : {})
+                          }}
+                        >
+                          <input
+                            type="radio"
+                            name={question.id}
+                            checked={answers[question.id] === option.points}
+                            onChange={() => handleAnswerSelect(question.id, option.points)}
+                            style={{
+                              marginRight: '0.5rem',
+                              /* Use primary brand colour for checked state (modern browsers) */
+                              accentColor: 'var(--color-primary)',
+                            }}
+                          />
+                          <span style={optionLabel}>{option.label}</span>
+                          <span style={optionPoints}>{option.points} points</span>
+                        </label>
+                      ))}
+                    </div>
                   ))}
+                  
+                  <button
+                    onClick={handleSubmitAnswers}
+                    disabled={!allQuestionsAnswered}
+                    style={
+                      !allQuestionsAnswered
+                        ? { ...buttonDisabled, width: '100%', marginTop: '1.5rem' }
+                        : submitBtnHover
+                        ? { ...primaryButton, ...primaryButtonHover, width: '100%', marginTop: '1.5rem' }
+                        : { ...primaryButton, width: '100%', marginTop: '1.5rem' }
+                    }
+                    onMouseEnter={() => setSubmitBtnHover(true)}
+                    onMouseLeave={() => setSubmitBtnHover(false)}
+                  >
+                    Submit Answers
+                  </button>
                 </div>
               )}
             </div>
-
-            {/* Submit button – fixed outside scrollable area so it's always visible */}
-            <button
-              onClick={handleSubmitAnswers}
-              disabled={!allQuestionsAnswered}
-              style={
-                !allQuestionsAnswered
-                  ? { ...buttonDisabled, width: '100%', marginTop: '1.5rem' }
-                  : submitBtnHover
-                  ? { ...primaryButton, ...primaryButtonHover, width: '100%', marginTop: '1.5rem' }
-                  : { ...primaryButton, width: '100%', marginTop: '1.5rem' }
-              }
-              onMouseEnter={() => setSubmitBtnHover(true)}
-              onMouseLeave={() => setSubmitBtnHover(false)}
-            >
-              Get the Points
-            </button>
-          </div>
+          </>
         );
         
       case 'results':
         return (
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', height: '100%' }}>
-            {/* Squad & Category info at top */}
-            {selectedTeam && selectedCategory && (
-              <div style={squadInfo}>
-                Squad: {selectedTeam.name} | Category: {selectedCategory.name}
-              </div>
-            )}
+          <>
+            <div style={containerHeader}>
+              <button
+                style={backBtnHover ? { ...backButtonBase, ...backButtonHover } : backButtonBase}
+                onClick={handleBack}
+                onMouseEnter={() => setBackBtnHover(true)}
+                onMouseLeave={() => setBackBtnHover(false)}
+              >
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Questions
+              </button>
+              
+              <h2 style={h2}>Estimation Results</h2>
+            </div>
             
             <div style={containerContent}>
               <div style={resultContainer}>
-                <StepItem index={0}>
-                  <div style={resultScore}>{totalScore}</div>
-                  <div style={resultLabel}>Total Points</div>
-                </StepItem>
+                <div style={resultScore}>{totalScore}</div>
+                <div style={resultLabel}>Total Points</div>
                 
-                <StepItem index={1}>
-                  <div style={resultStoryPoints}>
-                    {storyPoints !== null ? storyPoints : '?'}
-                  </div>
-                  <div style={resultLabel}>Story Points</div>
-                </StepItem>
-              </div>
-
-              {/* Action button – always visible at bottom like "Get the Points" */}
-              <StepItem index={2}>
+                <div style={resultStoryPoints}>
+                  {storyPoints !== null ? storyPoints : '?'}
+                </div>
+                <div style={resultLabel}>Story Points</div>
+                
                 <button
                   onClick={handleReset}
-                  style={
-                    submitBtnHover
-                      ? {
-                          ...primaryButton,
-                          ...primaryButtonHover,
-                          width: '100%',
-                          marginTop: '1.5rem',
-                        }
-                      : {
-                          ...primaryButton,
-                          width: '100%',
-                          marginTop: '1.5rem',
-                        }
+                  style={submitBtnHover 
+                    ? { ...primaryButton, ...primaryButtonHover, width: '100%', marginTop: '1.5rem' } 
+                    : { ...primaryButton, width: '100%', marginTop: '1.5rem' }
                   }
                   onMouseEnter={() => setSubmitBtnHover(true)}
                   onMouseLeave={() => setSubmitBtnHover(false)}
                 >
                   Start New Estimation
                 </button>
-              </StepItem>
+              </div>
             </div>
-          </div>
+          </>
         );
     }
   };
 
-  // Custom title for Category step with Change Squad link above Category Selection title
-  const categoryTitleContent = (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-      <button
-        style={backBtnHover ? { ...changeSquadLink, ...backButtonHover } : changeSquadLink}
-        onClick={handleBack}
-        onMouseEnter={() => setBackBtnHover(true)}
-        onMouseLeave={() => setBackBtnHover(false)}
-      >
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ marginRight: '0.25rem' }}>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Change Squad
-      </button>
-      <h1
-        style={{
-          fontSize: '5rem',
-          fontWeight: 700,
-          marginTop: '0.5rem',
-          fontFamily: 'var(--font-heading)',          // use primary heading font
-          color: 'var(--color-text)',
-          textAlign: 'right',
-        }}
-      >
-        Select a Story Type
-      </h1>
-    </div>
-  );
-
-  
-  /* -------------------------
-   * Results page title content
-   * -------------------------*/
-  const resultsTitleContent = (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-      }}
-    >
-      <button
-        style={backBtnHover ? { ...backToQuestionsLink, ...backButtonHover } : backToQuestionsLink}
-        onClick={handleBack}
-        onMouseEnter={() => setBackBtnHover(true)}
-        onMouseLeave={() => setBackBtnHover(false)}
-      >
-        <svg
-          width="16"
-          height="16"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          style={{ marginRight: '0.25rem' }}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Assess Again
-      </button>
-      <h1
-        style={{
-          fontSize: '5rem',
-          fontWeight: 700,
-          marginTop: '0.5rem',
-          fontFamily: 'var(--font-heading)',
-          color: 'var(--color-text)',
-          textAlign: 'right',
-        }}
-      >
-        Estimation Results
-      </h1>
-    </div>
-  );
   return (
     <>
-      {/* Global radio-button styles injected once */}
-      <style>{globalRadioStyles}</style>
-      
-      {/* Use StepTransition for smooth transitions between steps */}
-      <StepTransition
-        step={currentStep}
-        direction={transitionDirection}
-        transition="smooth"
-      >
-        {currentStep === 'team' ? (
-          <div style={pageContainer}>
+      {currentStep === 'team' ? (
+        <div style={pageContainer}>
+          {renderStepContent()}
+          {error && (
+            <div style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}>
+              {error}
+            </div>
+          )}
+        </div>
+      ) : (
+        /* Use shared TwoColumnLayout for the remaining steps */
+        <TwoColumnLayout
+          title={
+            currentStep === 'category'
+              ? 'Category Selection'
+              : currentStep === 'questions'
+              ? 'Questions'
+              : 'Estimation Results'
+          }
+        >
+          <>
             {renderStepContent()}
             {error && (
               <div style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}>
                 {error}
               </div>
             )}
-          </div>
-        ) : currentStep === 'category' ? (
-          // Special handling for category step with custom title that includes the Change Squad link
-          <TwoColumnLayout title={categoryTitleContent}>
-            <>
-              {renderStepContent()}
-              {error && (
-                <div style={{ color: '#ef4444', marginTop: '1rem', textAlign: 'center' }}>
-                  {error}
-                </div>
-              )}
-            </>
-          </TwoColumnLayout>
-        ) : (
-          /* Use shared TwoColumnLayout for the remaining steps */
-          <TwoColumnLayout
-            title={
-              currentStep === 'questions'
-                ? questionsTitleContent
-                : resultsTitleContent
-            }
-          >
-            <>
-              {renderStepContent()}
-              {error && (
-                <div
-                  style={{
-                    color: '#ef4444',
-                    marginTop: '1rem',
-                    textAlign: 'center',
-                  }}
-                >
-                  {error}
-                </div>
-              )}
-            </>
-          </TwoColumnLayout>
-        )}
-      </StepTransition>
+          </>
+        </TwoColumnLayout>
+      )}
     </>
   );
 };
