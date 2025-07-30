@@ -23,7 +23,7 @@ services:
       - '80:80'
     volumes:
       # Use production nginx config that contains the /api proxy rules
-      - ./deploy/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.simple.conf:/etc/nginx/nginx.conf:ro
 
 volumes:
   db_data: 
